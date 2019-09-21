@@ -1,0 +1,33 @@
+<head>
+    <title>Books Database</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+	<script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+	
+	<h1>HOME</h1><br/>
+
+	<ul>
+		<li><a href='./pages/authors.html'>Authors:</a> <span> All authors</span> </li>
+		<li><a href='./pages/books.html'>Books:</a> <span> All books</span> </li>
+		<li><a href='./pages/copies.html'>Copies:</a> <span> All copies</span> </li>
+		<li><a href='./pages/publishers.html'>Publishers:</a> <span> All publishers</span></li>
+		<li><a href='./pages/search.html'>Search:</a> <span> Find information about a book</span></li>
+		<li><a href='./pages/delete.html'>Delete:</a> <span> delete a table value</span> </li>
+		<li><a href='./pages/add.html'>Add:</a> <span> add a table value </span> </li>
+		<li><a href='./pages/modify.html'>Modify:</a> <span> modify a table value</span> </li>
+		
+	</ul>
+
+    <script>
+		var socket = io();//auto-discovery
+		$(document).ready(function(){ 
+			///Event Listeners
+			//logs current users
+			socket.on("server found" ,function(message){
+				console.log('The server told me ' + message);
+			});
+		});
+    </script>
+</body>

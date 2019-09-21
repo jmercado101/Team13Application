@@ -1,0 +1,61 @@
+<head>
+    <title>Books Database</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+	<script src="./../jquery-3.3.1.min.js"></script>
+
+	<style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+		tr:nth-child(even) {
+			background-color: #dddddd;
+		}
+	</style>
+</head>
+
+
+<body>
+	
+	<h1>PUBLISHER</h1><br/>
+
+    <li><a href='./../index.html'><span>Home</span></a></li>
+
+	<table id='sql_table'></table>
+
+	<script>
+		var current_table_data = [];
+		var socket = io();//auto-discovery
+		$(document).ready(function(){ 
+			//request author table
+			socket.emit('table request', 'publisher');
+			console.log('Sent request to server');
+			///Event Listeners
+			//logs current users
+			socket.on("table result" ,function(data){
+				current_table_data = data;
+				//console.log(data);
+				show_table(current_table_data);
+			});
+		});
+		//FUNCTIONS
+		function show_table(table){
+			var table_head_html = '<tr><th>publisherCode</th><th>publisherName</th><th>city</th></tr>';
+			var table_body_html = '';
+			
+			for(var i = 0; i < table.length; i++)
+			{
+				table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].publisherCode+"</td>"+"<td>"+table[i].publisherName+"</td>"+"<td>"+table[i].city+"</td>"+"</tr>");
+			}
+			console.log(table_body_html);
+			$('#sql_table').html(table_head_html+table_body_html);
+		}
+	</script>
+</body>
