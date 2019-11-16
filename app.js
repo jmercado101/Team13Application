@@ -36,6 +36,17 @@ io.on('connection', function(socket){
         });
     });
     // END NEW CODE
+	
+	  //socket on add ratings NEW
+  socket.on('addRatings', function(payload) {
+      var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comments + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
+      database.query(query, function(error, results, fields) {
+          if (error) throw error;
+          console.log(results);
+          socket.emit('table result', results);
+      });
+  });
+  //End NEW
 
   //On Search
   socket.on('search database', function(search_key){
