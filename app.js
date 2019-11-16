@@ -26,6 +26,17 @@ io.on('connection', function(socket){
   //On Test Event
   socket.emit('server found','it was found');
 
+
+    //NEW CODE Book Details
+    socket.on('bookDetails', function (ISBN) {
+        database.query("SELECT books.ISBN, title, genere, coverURL, price, publisher, descript, concat(fName, \" \", lName) AS authorName, bio, author_ID FROM books JOIN author ON author = author_ID WHERE ISBN = '" + ISBN + "'", function (error, results, fields) {
+            if (error) throw error;
+            console.log(results);
+            socket.emit('detailsResult', results[0]);
+        });
+    });
+    // END NEW CODE
+
   //On Search
   socket.on('search database', function(search_key){
 		database.query("SELECT title, OnHand, branchName, authorFirst, authorLast, sequence ,publisherName  FROM book as b, inventory as i, branch as br, author as a, publisher as p, wrote as w WHERE (b.title = '" + search_key +"' OR a.authorFirst = '"+search_key+"' OR a.authorLast = '"+search_key+"') AND b.bookCode = i.bookCode and i.branchNum = br.branchNum and b.bookCode = w.bookCode and w.authorNum = a.authorNum and b.publisherCode = p.publisherCode", function (error, results, fields) {

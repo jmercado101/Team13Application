@@ -1,0 +1,223 @@
+<html> 
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./../jquery-3.3.1.min.js"></script>
+
+    <title>Details</title>
+
+    <style type=text/css>
+
+        .header {
+            width: 100%;
+            height: 10%;
+            background-color: green;
+        }
+
+        .mainBody {
+            width: 100%;
+            height: 90%;
+        }
+
+        .NavigationBox {
+            background-color: blue;
+            width: 15%;
+            height: 100%;
+            float: left;
+        }
+
+        .productBox {
+            margin-left: 15%;
+            width: 85%;
+            height: 100%;
+            background-color: red;
+        }
+
+        .productTree {
+            padding-top: 0.50%;
+            padding-left: 20px;
+            height: 3%;
+            background-color: orange;
+        }
+
+        .product-left {
+            float: left;
+            width: 30%;
+        }
+
+        .bookCover {
+            padding-top: 50px;
+            margin-left: 50px;
+            width: 60%;
+            -webkit-transition: all 2s ease;
+            -moz-transition: all 2s ease;
+            -ms-transition: all 2s ease;
+            transition: all 2s ease;
+        }
+
+        .bookCover:hover {
+            width: 80%;
+        }
+
+        .bookDetails {
+            width: 60%;
+            margin-left: 50px;
+            background-color: orange;
+        }
+
+        .product-right {
+            margin-left: 30%;
+            width: 35%;
+        }
+
+        .bookTitle {
+            margin-top: 50px;
+            background-color: green;
+        }
+
+        .cartOptions {
+            background-color: orange;
+        }
+
+        .bookDescription {
+            background-color: blue;
+        }
+
+        .aboutAuthor {
+            background-color: green;
+        }
+
+        .userRating {
+            background-color: yellow;
+        }
+
+        .userComments {
+            background-color: orange;
+        }
+
+        h1, h2, h3, h4 {
+            display: inline;
+        }
+    </style>
+
+
+    <script>
+
+        var request = {};
+        var pairs = location.search.substring(1).split('&');
+        for (var i = 0; i < pairs.length; i++) {
+            var pair = pairs[i].split('=');
+            request[pair[0]] = pair[1];
+        }
+
+        var current_table_data = [];
+        var socket = io();//auto-discovery
+        $(document).ready(function () {
+            //request author table
+            socket.emit('bookDetails', request["ISBN"]);
+            console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on("detailsResult", function (data) {
+                bookData = data;
+                //console.log(data);
+                display(bookData);
+            });
+        });
+
+
+        function display(bookData) {
+
+            //document.getElementById("GETTEST").innerHTML = request["ISBN"];
+            var searchPage = "search.html";
+
+
+            document.getElementById("ISBN").innerHTML = bookData.ISBN;
+            document.getElementById("title").innerHTML = bookData.title;
+            document.getElementById("genere").innerHTML = bookData.genere;
+            document.getElementById("coverURL").src = bookData.coverURL;
+            document.getElementById("price").innerHTML = bookData.price.toFixed(2);
+            document.getElementById("author_ID").innerHTML = bookData.authorName;
+            document.getElementById("authorURL").setAttribute("href", searchPage + "?search=" + bookData.author_ID)
+            document.getElementById("publisher").innerHTML = bookData.publisher;
+            document.getElementById("descript").innerHTML = bookData.descript;
+
+        }
+
+    </script>
+
+
+
+</head>  
+	
+    <body onload="display()">
+
+		<div class="header">
+			<h1>GeekText</h1>
+            <span id="GETTEST"></span>
+		</div>
+
+		<div class="mainBody">
+			<div class="NavigationBox">
+				test
+			</div>
+
+
+			<div class="productBox">
+
+				<nav class="productTree">
+					Top > subCat > Toppic
+				</nav>
+
+                <div class="product-left">
+                    
+                        <img class="bookCover" id="coverURL" src="">
+                     
+                    <div class="bookDetails">
+                        <h2>Book Details</h2>
+                        <br/>
+                        <h3>Genere: <span id="genere"></span></h3>
+                        <p>Add More info</p>
+                        <span id="publisher"></span>
+                    </div>
+
+                </div>
+
+
+				<div class="product-right">
+
+					<div class="bookTitle">
+						<h2><span id="title"></span></h2><br/>
+                        <h3>By: <a href="" id="authorURL"><span id="author_ID"></span></a></h3><br/>
+                        ISBN: <span id="ISBN"></span>
+
+					</div>
+                    <div class="cartOptions">
+                        <h2>Price: $<span id="price"></span></h2>
+                        Cart Button goes here.
+                    </div>
+
+					<div class="bookDescription">
+						<span id="descript"></span>
+					</div>
+
+					<div class="aboutAuthor">
+						About TestAuthor...
+					</div>
+
+					<div class="userRating">
+						<h2>User Rating:</h2>
+					</div>
+
+					<div class="userComments">
+						<h2>User Comments</h2>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
+
+</html>
