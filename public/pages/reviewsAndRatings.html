@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 
 <head>
   <meta charset="UTF-8">
@@ -132,84 +132,84 @@
 </head>
 
 <body>
-  
-<div class="topnav">
-  <img href="#image"></img>
-  <a class="active" href="#home">Home</a>
-  <a href="#books">Books</a>
-  <a href="#best_sellers">Best Sellers</a>
-  <a href="#new_releases">New Releases</a>
-  <a href="#login" id= "login">Log In / Register</a>
-  <div class="cart-btn">
-                <span class="nav-icon">
-                    <i class="fas fa-cart-plus"></i>
-                </span>
-                <div class="cart-items">0</div>
+
+    <div class="topnav">
+        <img href="#image"></img>
+        <a class="active" href="#home">Home</a>
+        <a href="#books">Books</a>
+        <a href="#best_sellers">Best Sellers</a>
+        <a href="#new_releases">New Releases</a>
+        <a href="#login" id="login">Log In / Register</a>
+        <div class="cart-btn">
+            <span class="nav-icon">
+                <i class="fas fa-cart-plus"></i>
+            </span>
+            <div class="cart-items">0</div>
+        </div>
+    </div>
+    <h1>Review Form: </h1><br>
+    <section>
+        <form id="review_form">
+            <div class="nickname">
+                <h2> Would you like to show your nickname?</h2>
+                <input type="radio" name="anonymity" id="anonymity" value="false"> Yes
+                <input type="radio" name="anonymity" id="anonymity" value="true"> No, stay anonymous<br>
             </div>
-</div>
-  <h1>Review Form: </h1><br>
-  <section>
-    <form id="review_form">
-      <div class="nickname">
-      <h2> Would you like to show your nickname?</h2> 
-      <input type="radio" name="anonymity" id = "anonymity" value="false"> Yes
-      <input type="radio" name="anonymity" id = "anonymity" value="true"> No, stay anonymous<br>
-      </div>
-      
-      <div class="rate">
-    <input type="radio" id="star5" name="rate" value="5" />
-    <label for="star5" title="text">5 stars</label>
-    <input type="radio" id="star4" name="rate" value="4" />
-    <label for="star4" title="text">4 stars</label>
-    <input type="radio" id="star3" name="rate" value="3" />
-    <label for="star3" title="text">3 stars</label>
-    <input type="radio" id="star2" name="rate" value="2" />
-    <label for="star2" title="text">2 stars</label>
-    <input type="radio" id="star1" name="rate" value="1" />
-    <label for="star1" title="text">1 star</label>
-  </div>
 
-      <h3>Comments:</h3>
-    <b></b>
-    <textarea name= "comments" id="comments" placeholder="Write your comments about the book here"></textarea>
-    <br>
-    
-  <br>
-    
- <button id="submit_button" value="save" onClick="submit_delete_form();">Submit</button>
- </form>
-</section>
+            <div class="rate">
+                <input type="radio" id="star5" name="rate" value="5" />
+                <label for="star5" title="text">5 stars</label>
+                <input type="radio" id="star4" name="rate" value="4" />
+                <label for="star4" title="text">4 stars</label>
+                <input type="radio" id="star3" name="rate" value="3" />
+                <label for="star3" title="text">3 stars</label>
+                <input type="radio" id="star2" name="rate" value="2" />
+                <label for="star2" title="text">2 stars</label>
+                <input type="radio" id="star1" name="rate" value="1" />
+                <label for="star1" title="text">1 star</label>
+            </div>
+
+            <h3>Comments:</h3>
+            <b></b>
+            <textarea name="comments" id="comments" placeholder="Write your comments about the book here"></textarea>
+            <br>
+
+            <br>
+
+            <button id="submit_button" value="save" onClick="submit_delete_form();">Submit</button>
+        </form>
+    </section>
 
 
-<div id = 'table_form'> </div>
+    <div id='table_form'> </div>
 
-	<script>
- function submit_delete_form(){
+    <script>
+        function submit_delete_form() {
 
-   var request = {};
-        var pairs = location.search.substring(1).split('&');
-        for (var i = 0; i < pairs.length; i++) {
-            var pair = pairs[i].split('=');
-            request[pair[0]] = pair[1];
+            var request = {};
+            var pairs = location.search.substring(1).split('&');
+            for (var i = 0; i < pairs.length; i++) {
+                var pair = pairs[i].split('=');
+                request[pair[0]] = pair[1];
+            }
+
+            var socket = io();
+
+            var table_chosen = 'ratings';
+            var payload = {
+                ISBN: request["ISBN"],
+                user_id: request["id"],
+                anonymity: document.getElementById('anonymity').value,
+                rate: document.getElementById('rate').value,
+                comments: document.getElementById('comments').value
+            }
+            if (payload.ISBN === '' || payload.user_id === '' || payload.comments === '' || payload.rate === '' || payload.anonymity === '')
+                alert('All fields are mandatory');
+            else
+                socket.emit('addRatings', payload);
         }
+    </script>
 
-		var socket = io();
+</body >
 
-			var table_chosen = 'ratings';
-				var payload = {
-          ISBN: request["ISBN"];
-          user_id: request["id"];
-					anonymity: document.getElementById('anonymity').value,
-					rate: document.getElementById('rate').value,
-					comments: document.getElementById('comments').value
-				}
-				if(payload.ISBN === '' || payload.user_id === '' || payload.comments === '' || payload.rate === ''|| payload.anonymity === '')
-					alert('All fields are mandatory');
-				else
-					socket.emit('addRatings', payload);
-			}
-
-
-</body>
-
-</html>
+</html >
