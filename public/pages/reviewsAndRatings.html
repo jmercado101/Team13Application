@@ -184,7 +184,6 @@
 <div id = 'table_form'> </div>
 
 	<script>
- function submit_delete_form(){
 
    var request = {};
         var pairs = location.search.substring(1).split('&');
@@ -192,13 +191,14 @@
             var pair = pairs[i].split('=');
             request[pair[0]] = pair[1];
         }
+ function submit_delete_form(){
 
 		var socket = io();
 
 			var table_chosen = 'ratings';
 				var payload = {
-          ISBN: request["ISBN"];
-          user_id: request["id"];
+          ISBN: request["ISBN"],
+          user_id: request["id"],
 					anonymity: document.getElementById('anonymity').value,
 					rate: document.getElementById('rate').value,
 					comments: document.getElementById('comments').value
