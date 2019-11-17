@@ -206,7 +206,7 @@
 				if(payload.ISBN === '' || payload.user_id === '' || payload.comments === '' || payload.rate === ''|| payload.anonymity === '')
 					alert('All fields are mandatory');
 				else
-					socket.emit('add ratings', payload);
+					socket.emit('addRatings', payload);
 			}
 
 
