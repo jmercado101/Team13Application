@@ -1,4 +1,4 @@
-<html> 
+﻿<html> 
 
 <head>
     <link rel="stylesheet" type="text/css" href="styles.css">
@@ -99,6 +99,13 @@
         h1, h2, h3, h4 {
             display: inline;
         }
+
+        starChecked {
+            color: #ffc700;
+        }
+        starUnChecked {
+            color: #ccc;
+        }
     </style>
 
 
@@ -112,7 +119,7 @@
         }
 
         var current_table_data = [];
-        var socket = io();//auto-discovery
+        var socket = io();//open socket
         $(document).ready(function () {
             //request author table
             socket.emit('bookDetails', request["ISBN"]);
@@ -145,12 +152,44 @@
 
         }
 
+        $(document).ready(function () {
+            //request author table
+            socket.emit('bookRating', request["ISBN"]);
+            console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on("ratingResult", function (rating) {
+                bookRating = rating;
+                //console.log(data);
+                showStars(bookRating);
+            });
+        });
+
+        function showStars(numStars) {
+            var starsString = "";
+            var end = false;
+            if (numStars > 0) {
+                starsString = "";
+                for (var i = 0; i < 5; i++) {
+                    if ((numStars - i) >= 1) {
+                        starsString = starsString.concat("<starChecked>★ </starChecked>");
+                    }
+                    else {
+                        starsString = starsString.concat('<starUnChecked> ★</starUnChecked>');
+                    }
+                }
+                document.getElementById("starField").innerHTML = starsString + ' ' + numStars;
+            }
+            else {
+                document.getElementById("starField").innerHTML = "<starUnChecked>★ ★ ★ ★ ★</starUnChecked> " + numStars;
+            }
+        };
+
     </script>
 
 
 
 </head>  
-	
     <body onload="display()">
 
 		<div class="header">
@@ -206,9 +245,11 @@
 						About TestAuthor...
 					</div>
 
-					<div class="userRating">
-						<h2>User Rating:</h2>
-					</div>
+                    <div class="userRating">
+                        <h2>User Rating:</h2>
+                        <h2><span id="starField"></span></h2>
+                        
+                    </div>
 
 					<div class="userComments">
 						<h2>User Comments</h2>

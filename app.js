@@ -20,11 +20,11 @@ io.on('connection', function(socket){
     console.log('A user has connected');
 
   //On Disconnection
-    socket.on('disconnect', function(){
-  });
+    socket.on('disconnect', function () {
+    });
 
-  //On Test Event
-  socket.emit('server found','it was found');
+    //On Test Event
+    socket.emit('server found', 'it was found');
 
 
     //NEW CODE Book Details
@@ -35,30 +35,40 @@ io.on('connection', function(socket){
             socket.emit('detailsResult', results[0]);
         });
     });
+
+    socket.on('bookRating', function (ISBN) {
+        database.query("SELECT AVG(stars) AS rating FROM ratings WHERE ISBN = " + ISBN, function (error, rating, fields) {
+            if (error) throw error;
+            console.log(rating);
+            socket.emit('ratingResult', rating[0].rating.toFixed(1));
+        });
+    });
+
     // END NEW CODE
-	
-	  //socket on add ratings NEW
-  socket.on('addRatings', function(payload) {
+
+
+    //socket on add ratings NEW
+    socket.on('addRatings', function (payload) {
       var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comments + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
       database.query(query, function(error, results, fields) {
           if (error) throw error;
           console.log(results);
           socket.emit('table result', results);
       });
-  });
-  //End NEW
+    });
+    //End NEW
 
-  //On Search
-  socket.on('search database', function(search_key){
+    //On Search
+    socket.on('search database', function(search_key){
 		database.query("SELECT title, OnHand, branchName, authorFirst, authorLast, sequence ,publisherName  FROM book as b, inventory as i, branch as br, author as a, publisher as p, wrote as w WHERE (b.title = '" + search_key +"' OR a.authorFirst = '"+search_key+"' OR a.authorLast = '"+search_key+"') AND b.bookCode = i.bookCode and i.branchNum = br.branchNum and b.bookCode = w.bookCode and w.authorNum = a.authorNum and b.publisherCode = p.publisherCode", function (error, results, fields) {
 		if (error) throw error;
 		console.log(results);
-		socket.emit('table result', results);
-	});
-  });
+            socket.emit('table result', results);
+        });
+    });
 
-  //On table request
-  socket.on('table request', function(table){
+    //On table request
+    socket.on('table request', function(table){
 	console.log('Received request for ' + table);
 	 database.query('SELECT * FROM ' + table, function (error, results, fields) {
 		if (error) throw error;
@@ -66,8 +76,8 @@ io.on('connection', function(socket){
 		socket.emit('table result', results);
 	});
   });
-  //on delete from author
-  socket.on('delete author', function(payload){
+    //on delete from author
+    socket.on('delete author', function(payload){
 	var query = "DELETE FROM author where"; //used for building query
 	var a = false;//flags
 	var b = false;
@@ -102,8 +112,8 @@ io.on('connection', function(socket){
 			});
 	}
   });
-  //socket on add author
-  socket.on('add author', function(payload){
+    //socket on add author
+    socket.on('add author', function(payload){
 	var query = "INSERT INTO author VALUES('" + payload.authorNum + "','"+ payload.authorLast + "','" + payload.authorFirst + "')";//build query, all fields are necessary in add page
 		database.query(query, function (error, results, fields) {
 			if (error) throw error;
@@ -111,8 +121,8 @@ io.on('connection', function(socket){
 			socket.emit('table result', results);
 			});
   });
-  //socket on update author
-  socket.on('update author', function(payload){
+    //socket on update author
+    socket.on('update author', function(payload){
 	var query1 = "UPDATE author SET ";//build SET clause
 	var query2 = "WHERE ";//build WHERE clause
 	var a1 = false;
@@ -174,8 +184,8 @@ io.on('connection', function(socket){
 			});
 	
   });
-  //Rest of the sockets follow the same logic as the previous ones
-  socket.on('delete publisher', function(payload){
+    //Rest of the sockets follow the same logic as the previous ones
+    socket.on('delete publisher', function (payload) {
 	var query = "DELETE FROM publisher where";
 	var a = false;
 	var b = false;
@@ -211,7 +221,7 @@ io.on('connection', function(socket){
 	}
   });
 
-   socket.on('add publisher', function(payload){
+    socket.on('add publisher', function (payload) {
 	var query = "INSERT INTO publisher VALUES('" + payload.publisherCode + "','"+ payload.publisherName + "','" + payload.city + "')";
 		database.query(query, function (error, results, fields) {
 			if (error) throw error;
@@ -283,7 +293,7 @@ io.on('connection', function(socket){
 	
   });
 
-  socket.on('delete book', function(payload){
+    socket.on('delete book', function(payload){
 	var query = "DELETE FROM book where";
 	var a = false;
 	var b = false;
@@ -337,7 +347,7 @@ io.on('connection', function(socket){
 	}
   });
 
-  socket.on('add book', function(payload){
+    socket.on('add book', function(payload){
 	var query = "INSERT INTO book VALUES('" + payload.bookCode + "','"+ payload.title + "','" + payload.publisherCode + "','" + payload.type + "','" + payload.paperback + "')";
 		database.query(query, function (error, results, fields) {
 			if (error) throw error;
@@ -346,7 +356,7 @@ io.on('connection', function(socket){
 			});
   });
 
-  socket.on('update book', function(payload){
+    socket.on('update book', function(payload){
 	var query1 = "UPDATE book SET ";
 	var query2 = "WHERE ";
 	var a1 = false;
@@ -445,7 +455,7 @@ io.on('connection', function(socket){
 
   });
 
-  socket.on('delete copy', function(payload){
+    socket.on('delete copy', function(payload){
 	var query = "DELETE FROM copy where";
 	var a = false;
 	var b = false;
@@ -499,7 +509,7 @@ io.on('connection', function(socket){
 	}
   });
 
-  socket.on('add copy', function(payload){
+    socket.on('add copy', function(payload){
 	var query = "INSERT INTO copy VALUES('" + payload.bookCode + "','"+ payload.branchNum + "','" + payload.copyNum + "','" + payload.quality + "'," + payload.price + ")";
 		database.query(query, function (error, results, fields) {
 			if (error) throw error;
@@ -508,7 +518,7 @@ io.on('connection', function(socket){
 			});
   });
 
-  socket.on('update copy', function(payload){
+    socket.on('update copy', function(payload){
 	var query1 = "UPDATE copy SET ";
 	var query2 = "WHERE ";
 	var a1 = false;
