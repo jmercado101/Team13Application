@@ -30,32 +30,47 @@ io.on('connection', function(socket){
     //NEW CODE Book Details
     socket.on('bookDetails', function (ISBN) {
         database.query("SELECT books.ISBN, title, genere, coverURL, price, publisher, descript, concat(fName, \" \", lName) AS authorName, bio, author_ID FROM books JOIN author ON author = author_ID WHERE ISBN = '" + ISBN + "'", function (error, results, fields) {
-            if (error) throw error;
-            console.log(results);
-            socket.emit('detailsResult', results[0]);
+            if (error) {
+                console.error(error);
+            }
+            else {
+                console.log(results);
+                socket.emit('detailsResult', results[0]);
+            }
         });
     });
 
     socket.on('bookRating', function (ISBN) {
         database.query("SELECT AVG(stars) AS rating FROM ratings WHERE ISBN = " + ISBN, function (error, rating, fields) {
-            if (error) throw error;
-            console.log(rating);
-            socket.emit('ratingResult', rating[0].rating.toFixed(1));
+            if (error) {
+                console.error(error);
+            }
+            else {
+                console.log(rating);
+                socket.emit('ratingResult', rating[0].rating.toFixed(1));
+            }
         });
     });
 
+    socket.on('testFunction', function (comment) {
+        console.log("testFunctionSays: " + comment);
+    });
     // END NEW CODE
 
 
     //socket on add ratings NEW
     socket.on('addRatings', function (payload) {
-      var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comments + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
-      database.query(query, function(error, results, fields) {
-          if (error) throw error;
-          console.log("Added Comment to: " + payload.ISBN);
-          console.log(results);
-          socket.emit('table result', results);
-      });
+        var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comment + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
+        database.query(query, function (error, results, fields) {
+            if (error) {
+                console.error('Bad query on RATING: ' + error);
+                console.log("Comment on " + payload.ISBN + " failed.");
+            }
+            else {
+                console.log("Added Comment to: " + payload.ISBN);
+            }
+            console.log(results);
+        });
     });
     //End NEW
 
