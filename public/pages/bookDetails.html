@@ -106,6 +106,13 @@
         starUnChecked {
             color: #ccc;
         }
+
+        button {
+            font-size: 20px;
+            border-radius: 8px;
+            background-color: #001f3f;
+            color: white;   
+        }
     </style>
 
 
@@ -149,6 +156,7 @@
             document.getElementById("authorURL").setAttribute("href", searchPage + "?search=" + bookData.author_ID)
             document.getElementById("publisher").innerHTML = bookData.publisher;
             document.getElementById("descript").innerHTML = bookData.descript;
+            document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
 
         }
 
@@ -247,7 +255,8 @@
 
                     <div class="userRating">
                         <h2>User Rating:</h2>
-                        <h2><span id="starField"></span></h2>
+                        <h2><span id="starField"></span> </h2>
+                        <button id="rate_button" value="rate_review" onClick="">Rate and Review</button>
                         
                     </div>
 
