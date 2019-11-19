@@ -73,6 +73,19 @@ io.on('connection', function(socket){
         });
     });
     //End NEW
+	
+	//socket on check if purchased NEW
+	 socket.on('Purchased', function(ISBN) {
+      database.query("IF EXISTS (SELECT *  FROM Purchased as P  WHERE (P.user_id = user.id) AND (P.ISBN = books.ISBN)) BEGIN SELECT 1 END ELSE BEGIN SELECT 0 END", function(error, results, fields) {
+          if (error) {
+              console.error(error);
+          } else {
+              console.log(results);
+              socket.emit('resultPurchase', results[0]);
+          }
+      });
+  });
+  //End NEW
 
     //On Search
     socket.on('search database', function(search_key){
