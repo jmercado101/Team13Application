@@ -192,6 +192,19 @@
                 document.getElementById("starField").innerHTML = "<starUnChecked>★ ★ ★ ★ ★</starUnChecked> " + numStars;
             }
         };
+	//If user didn't buy the book then Disable rate and review button NEW   
+       $(document).ready(function () {
+    	socket.emit('Purchased', request["ISBN"]);
+    	socket.on("resultPurchase", function (data) {
+	if(data != 1){
+	    document.getElementById("rate_button").disabled = true;
+	}else{
+	    document.getElementById("rate_button").disabled = false;
+	}
+	}
+       });
+      });
+	//End NEW
 
     </script>
 
