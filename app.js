@@ -55,6 +55,32 @@ io.on('connection', function(socket){
     socket.on('testFunction', function (comment) {
         console.log("testFunctionSays: " + comment);
     });
+
+    socket.on('purchased', function (ISBN, ID) {
+        database.query("SELECT count(*) AS count FROM purchased WHERE EXISTS (SELECT * FROM purchased WHERE purchased.ID = " + ID + " AND purchased.ISBN = " + ISBN + ")", function (error, purchased, fields) {
+            if (error) {
+                console.error(error);
+            }
+            else
+            {
+                console.log('Book purchased: ' + purchased[0].count);
+                socket.emit('wasPurchased', purchased[0].count);
+            }
+        });
+    });
+
+    socket.on('comments', function (ISBN, page) {
+        var commentsPerPage = 5;
+        database.query("SELECT userID, comments, stars, anonymity", function (error, comments, fields) {
+            if (error) {
+                console.error(error);
+            }
+            else {
+                console.log("Got comments.");
+                socket.emit('gotComments', comments);
+            }
+        });
+    });
     // END NEW CODE
 
 

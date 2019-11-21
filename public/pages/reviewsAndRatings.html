@@ -221,6 +221,7 @@
             }
             else {
                 socket.emit('addRatings', payload);
+                document.location.href = "bookDetails.html?ISBN=" + request["ISBN"];
             }
                 
         };

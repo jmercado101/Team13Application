@@ -109,9 +109,9 @@
 
         button {
             font-size: 20px;
-            border-radius: 8px;
-            background-color: #001f3f;
-            color: white;   
+            border-radius: 12px;
+            background-color: #7bb743;
+            color: white;
         }
     </style>
 
@@ -192,6 +192,35 @@
                 document.getElementById("starField").innerHTML = "<starUnChecked>★ ★ ★ ★ ★</starUnChecked> " + numStars;
             }
         };
+
+
+
+        $(document).ready(function () {
+            //request author table
+            socket.emit('purchased', request["ISBN"], 2);
+            console.log('Checking is user bought the book...');
+            ///Event Listeners
+            //logs current users
+            socket.on("wasPurchased", function (bought) {
+                wasBought = bought;
+                //console.log(data);
+                boughtBook(wasBought);
+            });
+        });
+
+        function boughtBook(value) {            
+            if (value >= 1) {
+                document.getElementById("rate_button").disabled = false;
+            }
+            else {
+                document.getElementById("rate_button").disabled = true;
+                document.getElementById("rate_button").style.backgroundColor = '#889977';
+                document.getElementById("rate_button").style.color ='#a7bd91';
+            }
+            
+        }
+
+
 
     </script>
 
