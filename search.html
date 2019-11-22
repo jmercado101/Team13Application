@@ -245,19 +245,6 @@
                 document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
         }
 
-		$(document).ready(function () {
-            //request author table
-            socket.emit('bookRating', request["ISBN"]);
-            console.log('Sent request to server');
-            ///Event Listeners
-            //logs current users
-            socket.on("ratingResult", function (rating) {
-                bookRating = rating;
-                //console.log(data);
-                showStars(bookRating);
-            });
-        });
-
         function showStars(numStars) {
             document.getElementById("starField").innerHTML = genStars(numStars) + ' ' + numStars;
         };
@@ -283,18 +270,6 @@
             
         }
 
-        $(document).ready(function () {
-            //request author table
-            socket.emit('purchased', request["ISBN"], 2);
-            console.log('Checking is user bought the book...');
-            ///Event Listeners
-            //logs current users
-            socket.on("wasPurchased", function (bought) {
-                wasBought = bought;
-                //console.log(data);
-                boughtBook(wasBought);
-            });
-        });
 
         function boughtBook(value) {            
             if (value >= 1) {
@@ -307,17 +282,6 @@
             }
             
         }
-
-        $(document).ready(function () {
-            //request author table
-            socket.emit('comments', request["ISBN"]);
-            console.log('Getting comments on book...');
-            ///Event Listeners
-            socket.on("gotComments", function (comments) {
-                //console.log(data);
-                displayComments(comments);
-            });
-        });
 
         function displayComments(commentArray) {
             var userName = "UsernameHere";
@@ -343,8 +307,8 @@
                 display(table[i]);
 				//table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].title+"</td>" + "<td>"+table[i].OnHand+"</td>"+"<td>"+table[i].branchName+"</td>"+ "<td>"+table[i].authorFirst+"</td>"  + "<td>"+table[i].authorLast+"</td>" + "<td>"+table[i].sequence+"</td>" + "<td>"+table[i].publisherName+"</td>" +"</tr>");
 			}
-			console.log(table_body_html);
-			$('#sql_table').html(table_head_html+table_body_html);
+			//console.log(table_body_html);
+			//$('#sql_table').html(table_head_html+table_body_html);
 		}
 				
 	</script>
