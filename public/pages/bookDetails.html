@@ -68,7 +68,7 @@
 
         .product-right {
             margin-left: 30%;
-            width: 35%;
+            width: 45%;
         }
 
         .bookTitle {
@@ -112,6 +112,29 @@
             border-radius: 12px;
             background-color: #7bb743;
             color: white;
+        }
+        username {
+            vertical-align: top;
+        }
+        .commentHead
+        {
+            /*background-color: green; */
+        }
+        .userImage
+        {
+            float: left;
+        }
+        .nameAndRate {
+            padding-top: 15px;
+            padding-left: 90px;
+            vertical-align: middle;
+        }
+        .comment {
+            padding-top: 13px;
+            padding-left: 13px;
+            padding-right: 13px;
+            padding-bottom: 13px;
+            /*background-color: blue; */
         }
     </style>
 
@@ -174,6 +197,10 @@
         });
 
         function showStars(numStars) {
+            document.getElementById("starField").innerHTML = genStars(numStars) + ' ' + numStars;
+        };
+
+        function genStars(numStars) {
             var starsString = "";
             var end = false;
             if (numStars > 0) {
@@ -186,13 +213,13 @@
                         starsString = starsString.concat('<starUnChecked> ★</starUnChecked>');
                     }
                 }
-                document.getElementById("starField").innerHTML = starsString + ' ' + numStars;
+                return starsString;
             }
             else {
-                document.getElementById("starField").innerHTML = "<starUnChecked>★ ★ ★ ★ ★</starUnChecked> " + numStars;
+                return "<starUnChecked>★ ★ ★ ★ ★</starUnChecked>";
             }
-        };
-
+            
+        }
 
 
         $(document).ready(function () {
@@ -220,8 +247,31 @@
             
         }
 
+        $(document).ready(function () {
+            //request author table
+            socket.emit('comments', request["ISBN"]);
+            console.log('Getting comments on book...');
+            ///Event Listeners
+            socket.on("gotComments", function (comments) {
+                //console.log(data);
+                displayComments(comments);
+            });
+        });
 
+        function displayComments(commentArray) {
+            var userName = "UsernameHere";
+            var comments = "";
+            for (i in commentArray) {
+                comments = comments.concat("<div class='commentHead'><img class='userImage' src='https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-03.png' width='80px' height='80px'></img>");
+                comments = comments.concat("<div class='nameAndRate'><h3><username>" + commentArray[i].nickname + "</username></h3>");
+                comments = comments.concat("<br><h3>" + genStars(commentArray[i].stars) + "</h3></div></div>");
+                comments = comments.concat("<div class='comment'>" + commentArray[i].comments + "</div>");
+                comments = comments.concat("<hr>");
+            }
 
+            document.getElementById("commentSection").innerHTML = comments;
+        }
+        
     </script>
 
 
@@ -289,9 +339,13 @@
                         
                     </div>
 
-					<div class="userComments">
-						<h2>User Comments</h2>
-					</div>
+                    <div class="userComments">
+                        <h2>User Comments</h2>
+                        <hr>
+                        <div style="height:400px;width:100%;border:0px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+                            <span id="commentSection"></span>
+                        </div>
+                    </div>
 
 				</div>
 			</div>

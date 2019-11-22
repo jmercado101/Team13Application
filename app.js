@@ -29,27 +29,38 @@ io.on('connection', function(socket){
 
     //NEW CODE Book Details
     socket.on('bookDetails', function (ISBN) {
-        database.query("SELECT books.ISBN, title, genere, coverURL, price, publisher, descript, concat(fName, \" \", lName) AS authorName, bio, author_ID FROM books JOIN author ON author = author_ID WHERE ISBN = '" + ISBN + "'", function (error, results, fields) {
-            if (error) {
-                console.error(error);
-            }
-            else {
-                console.log(results);
-                socket.emit('detailsResult', results[0]);
-            }
-        });
+        if (ISBN != null) {
+            database.query("SELECT books.ISBN, title, genere, coverURL, price, publisher, descript, concat(fName, \" \", lName) AS authorName, bio, author_ID FROM books JOIN author ON author = author_ID WHERE ISBN = '" + ISBN + "'", function (error, results, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    console.log(results);
+                    socket.emit('detailsResult', results[0]);
+                }
+            });
+        }
+        else {
+            console.error("ERROR: bookDetails: ISBN == null");
+        }
+        
     });
 
     socket.on('bookRating', function (ISBN) {
-        database.query("SELECT AVG(stars) AS rating FROM ratings WHERE ISBN = " + ISBN, function (error, rating, fields) {
-            if (error) {
-                console.error(error);
-            }
-            else {
-                console.log(rating);
-                socket.emit('ratingResult', rating[0].rating.toFixed(1));
-            }
-        });
+        if (ISBN != null) {
+            database.query("SELECT AVG(stars) AS rating FROM ratings WHERE ISBN = " + ISBN, function (error, rating, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    console.log(rating);
+                    socket.emit('ratingResult', rating[0].rating.toFixed(1));
+                }
+            });
+        }
+        else {
+            console.error("ERROR: bookRating: ISBN == null");
+        }
     });
 
     socket.on('testFunction', function (comment) {
@@ -57,30 +68,46 @@ io.on('connection', function(socket){
     });
 
     socket.on('purchased', function (ISBN, ID) {
-        database.query("SELECT count(*) AS count FROM purchased WHERE EXISTS (SELECT * FROM purchased WHERE purchased.ID = " + ID + " AND purchased.ISBN = " + ISBN + ")", function (error, purchased, fields) {
-            if (error) {
-                console.error(error);
-            }
-            else
-            {
-                console.log('Book purchased: ' + purchased[0].count);
-                socket.emit('wasPurchased', purchased[0].count);
-            }
-        });
+        if (ISBN != null || ID != null) {
+            database.query("SELECT count(*) AS count FROM purchased WHERE EXISTS (SELECT * FROM purchased WHERE purchased.ID = " + ID + " AND purchased.ISBN = " + ISBN + ")", function (error, purchased, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    console.log('Book purchased: ' + purchased[0].count);
+                    socket.emit('wasPurchased', purchased[0].count);
+                }
+            });
+        }
+        else {
+            console.error("ERROR: purchased: ISBN or ID == null");
+        }
     });
 
-    socket.on('comments', function (ISBN, page) {
-        var commentsPerPage = 5;
-        database.query("SELECT userID, comments, stars, anonymity", function (error, comments, fields) {
-            if (error) {
-                console.error(error);
-            }
-            else {
-                console.log("Got comments.");
-                socket.emit('gotComments', comments);
-            }
-        });
+    socket.on('comments', function (ISBN) {
+        var maxComments = 100;
+        if (ISBN != null) {
+            database.query("SELECT nickname, anonymity, comments, stars FROM ratings INNER JOIN users ON userID = ID WHERE ISBN =" + ISBN + " LIMIT 0, " + maxComments, function (error, comments, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    for (i in comments) {
+                        if (comments[i].anonymity == 1) {
+                            console.log("User requested anonymity.\nHiding name: " + comments[i].nickname);
+                            comments[i].nickname = "Anonymous";
+                        }
+                    }
+                    console.log(comments);
+                    socket.emit('gotComments', comments);
+                }
+            });
+        }
+        else {
+            console.error("ERROR: comments: ISBN == null");
+        }
     });
+
     // END NEW CODE
 
 
