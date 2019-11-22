@@ -48,15 +48,20 @@ io.on('connection', function(socket){
 	
 	//Query to get details from cart
 	socket.on('getCart', function (userID) {
-		database.query("Select userID, c.ISBN, quantity, coverURL, price From cart as c join books as b on c.ISBN Where userID = '" + userID + "'", function (error, results, fields) {
-			if (error) {
-				console.error(error);
-			}
-			else {
-				console.log(results);
-				socket.emit('cartDetails', results[0]);
-			}
-		});
+        if (userID != null) {
+            database.query("Select userID, c.ISBN, quantity, coverURL, price From cart as c join books as b on c.ISBN Where userID = '" + userID + "'", function (error, results, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    console.log(results);
+                    socket.emit('cartDetails', results[0]);
+                }
+            });
+        }
+        else {
+            console.error("ERROR: getCart: userID == null");
+        }
 	});
 
     socket.on('bookRating', function (ISBN) {
