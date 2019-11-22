@@ -71,8 +71,14 @@ io.on('connection', function(socket){
                     console.error(error);
                 }
                 else {
-                    console.log(rating);
-                    socket.emit('ratingResult', rating[0].rating.toFixed(1));
+                    if (rating != null) {
+                        console.log(rating);
+                        socket.emit('ratingResult', rating[0].rating.toFixed(1));
+                    }
+                    else {
+                        console.log("NOTE: bookRating: No ratings yet.  Book rating returned as 0.");
+                        socket.emit('ratingResult', 0);
+                    }
                 }
             });
         }
