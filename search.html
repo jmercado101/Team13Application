@@ -4,33 +4,218 @@
     <script src="/socket.io/socket.io.js"></script>
 	<script src="./../jquery-3.3.1.min.js"></script>
 
-	<style>
-		table {
-			font-family: arial, sans-serif;
-			border-collapse: collapse;
-			width: 100%;
-		}
-		td, th {
-			border: 1px solid #dddddd;
-			text-align: left;
-			padding: 8px;
-		}
-		tr:nth-child(even) {
-			background-color: #dddddd;
-		}
-	</style>
+	<style type=text/css>
+
+        .header {
+            width: 100%;
+            height: 10%;
+            background-color: green;
+        }
+
+        .mainBody {
+            width: 100%;
+            height: 90%;
+        }
+
+        .NavigationBox {
+            background-color: blue;
+            width: 15%;
+            height: 100%;
+            float: left;
+        }
+
+        .productBox {
+            margin-left: 15%;
+            width: 85%;
+            height: 100%;
+            background-color: red;
+        }
+
+        .productTree {
+            padding-top: 0.50%;
+            padding-left: 20px;
+            height: 3%;
+            background-color: orange;
+        }
+
+        .product-left {
+            float: left;
+            width: 30%;
+        }
+
+        .bookCover {
+            padding-top: 50px;
+            margin-left: 50px;
+            width: 60%;
+            -webkit-transition: all 2s ease;
+            -moz-transition: all 2s ease;
+            -ms-transition: all 2s ease;
+            transition: all 2s ease;
+        }
+
+        .bookCover:hover {
+            width: 80%;
+        }
+
+        .bookDetails {
+            width: 60%;
+            margin-left: 50px;
+            background-color: orange;
+        }
+
+        .product-right {
+            margin-left: 30%;
+            width: 45%;
+        }
+
+        .bookTitle {
+            margin-top: 50px;
+            background-color: green;
+        }
+
+        .cartOptions {
+            background-color: orange;
+        }
+
+        .bookDescription {
+            background-color: blue;
+        }
+
+        .aboutAuthor {
+            background-color: green;
+        }
+
+        .userRating {
+            background-color: yellow;
+        }
+
+        .userComments {
+            background-color: orange;
+        }
+
+        h1, h2, h3, h4 {
+            display: inline;
+        }
+
+        starChecked {
+            color: #ffc700;
+        }
+        starUnChecked {
+            color: #ccc;
+        }
+
+        button {
+            font-size: 20px;
+            border-radius: 12px;
+            background-color: #7bb743;
+            color: white;
+        }
+        username {
+            vertical-align: top;
+        }
+        .commentHead
+        {
+            /*background-color: green; */
+        }
+        .userImage
+        {
+            float: left;
+        }
+        .nameAndRate {
+            padding-top: 15px;
+            padding-left: 90px;
+            vertical-align: middle;
+        }
+        .comment {
+            padding-top: 13px;
+            padding-left: 13px;
+            padding-right: 13px;
+            padding-bottom: 13px;
+            /*background-color: blue; */
+        }
+
+		</style>
 </head>
 
 <body>
 
 	<h1>Search</h1><br/>
 	<li><a href='./../index.html'><span>Home</span></a></li>
-	<h4>Select a title to search for </h4>
-	<input id='1' placeholder='Book Title'>
+	<h4>Select a book to search for </h4>
+	<input id='1' placeholder='SEARCH'>
 	<input type='submit'  id = 'submit' value='Submit' onClick = 'search_database()'>
-	<table id='sql_table'></table>
+	
+	 <div class="header">
+			<h1>GeekText</h1>
+            <span id="GETTEST"></span>
+		</div>
 
-	<div id = 'table_form'> </div>
+		<div class="mainBody">
+			<div class="NavigationBox">
+				test
+			</div>
+
+
+			<div class="productBox">
+
+				<nav class="productTree">
+					Top > subCat > Toppic
+				</nav>
+
+                <div class="product-left">
+                    
+                        <img class="bookCover" id="coverURL" src="">
+                     
+                    <div class="bookDetails">
+                        <h2>Book Details</h2>
+                        <br/>
+                        <h3>Genere: <span id="genere"></span></h3>
+                        <p>Add More info</p>
+                        <span id="publisher"></span>
+                    </div>
+
+                </div>
+
+
+				<div class="product-right">
+
+					<div class="bookTitle">
+						<h2><span id="title"></span></h2><br/>
+                        <h3>By: <a href="" id="authorURL"><span id="author_ID"></span></a></h3><br/>
+                        ISBN: <span id="ISBN"></span>
+
+					</div>
+                    <div class="cartOptions">
+                        <h2>Price: $<span id="price"></span></h2>
+                        Cart Button goes here.
+                    </div>
+
+					<div class="bookDescription">
+						<span id="descript"></span>
+					</div>
+
+					<div class="aboutAuthor">
+						About TestAuthor...
+					</div>
+
+                    <div class="userRating">
+                        <h2>User Rating:</h2>
+                        <h2><span id="starField"></span> </h2>
+                        <button id="rate_button" value="rate_review" onClick="">Rate and Review</button>
+                        
+                    </div>
+
+                    <div class="userComments">
+                        <h2>User Comments</h2>
+                        <hr>
+                        <div style="height:400px;width:100%;border:0px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+                            <span id="commentSection"></span>
+                        </div>
+                    </div>
+
+				</div>
+			</div>
+		</div>
 
 	<script>
 		var socket = io();
@@ -39,19 +224,124 @@
 			var search_key = document.getElementById('1').value;
 			socket.emit("search database", search_key);
 		}
-		socket.on("table result" ,function(data){
+		socket.on("results" ,function(data){
 				current_table_data = data;
 				//console.log(data);
 				show_table(current_table_data);
 			});
-		//title, OnHand, branchName, authorFirst, authorLast, sequence ,publisherName 
+		 
+
+		 function display(bookData) {
+
+            //document.getElementById("GETTEST").innerHTML = request["ISBN"];
+				document.getElementById("ISBN").innerHTML = bookData.ISBN;
+                document.getElementById("title").innerHTML = bookData.title;
+                document.getElementById("genere").innerHTML = bookData.genere;
+                document.getElementById("coverURL").src = bookData.coverURL;
+                document.getElementById("price").innerHTML = bookData.price.toFixed(2);
+                document.getElementById("author_ID").innerHTML = bookData.authorName;
+                document.getElementById("publisher").innerHTML = bookData.publisher;
+                document.getElementById("descript").innerHTML = bookData.descript;
+                document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
+        }
+
+		$(document).ready(function () {
+            //request author table
+            socket.emit('bookRating', request["ISBN"]);
+            console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on("ratingResult", function (rating) {
+                bookRating = rating;
+                //console.log(data);
+                showStars(bookRating);
+            });
+        });
+
+        function showStars(numStars) {
+            document.getElementById("starField").innerHTML = genStars(numStars) + ' ' + numStars;
+        };
+
+        function genStars(numStars) {
+            var starsString = "";
+            var end = false;
+            if (numStars > 0) {
+                starsString = "";
+                for (var i = 0; i < 5; i++) {
+                    if ((numStars - i) >= 1) {
+                        starsString = starsString.concat("<starChecked>★ </starChecked>");
+                    }
+                    else {
+                        starsString = starsString.concat('<starUnChecked> ★</starUnChecked>');
+                    }
+                }
+                return starsString;
+            }
+            else {
+                return "<starUnChecked>★ ★ ★ ★ ★</starUnChecked>";
+            }
+            
+        }
+
+        $(document).ready(function () {
+            //request author table
+            socket.emit('purchased', request["ISBN"], 2);
+            console.log('Checking is user bought the book...');
+            ///Event Listeners
+            //logs current users
+            socket.on("wasPurchased", function (bought) {
+                wasBought = bought;
+                //console.log(data);
+                boughtBook(wasBought);
+            });
+        });
+
+        function boughtBook(value) {            
+            if (value >= 1) {
+                document.getElementById("rate_button").disabled = false;
+            }
+            else {
+                document.getElementById("rate_button").disabled = true;
+                document.getElementById("rate_button").style.backgroundColor = '#889977';
+                document.getElementById("rate_button").style.color ='#a7bd91';
+            }
+            
+        }
+
+        $(document).ready(function () {
+            //request author table
+            socket.emit('comments', request["ISBN"]);
+            console.log('Getting comments on book...');
+            ///Event Listeners
+            socket.on("gotComments", function (comments) {
+                //console.log(data);
+                displayComments(comments);
+            });
+        });
+
+        function displayComments(commentArray) {
+            var userName = "UsernameHere";
+            var comments = "";
+            for (i in commentArray) {
+                comments = comments.concat("<div class='commentHead'><img class='userImage' src='https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-03.png' width='80px' height='80px'></img>");
+                comments = comments.concat("<div class='nameAndRate'><h3><username>" + commentArray[i].nickname + "</username></h3>");
+                comments = comments.concat("<br><h3>" + genStars(commentArray[i].stars) + "</h3></div></div>");
+                comments = comments.concat("<div class='comment'>" + commentArray[i].comments + "</div>");
+                comments = comments.concat("<hr>");
+            }
+
+            document.getElementById("commentSection").innerHTML = comments;
+        }
+
+
 		function show_table(table){
-			var table_head_html = '<tr><th>Title</th><th>On Hand</th><th>Branch Name</th><th>Author First Name</th> <th>Author Last Name Name</th>  <th>Sequence</th>  <th>Publisher Name</th> </tr>';
-			var table_body_html = '';
+			//var table_head_html = '<tr><th>Title</th><th>On Hand</th><th>Branch Name</th><th>Author First Name</th> <th>Author Last Name Name</th>  <th>Sequence</th>  <th>Publisher Name</th> </tr>';
+			//var table_body_html = '';
 			console.log(table);
 			for(var i = 0; i < table.length; i++)
 			{
-				table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].title+"</td>" + "<td>"+table[i].OnHand+"</td>"+"<td>"+table[i].branchName+"</td>"+ "<td>"+table[i].authorFirst+"</td>"  + "<td>"+table[i].authorLast+"</td>" + "<td>"+table[i].sequence+"</td>" + "<td>"+table[i].publisherName+"</td>" +"</tr>");
+                display(table[i]);
+				//table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].title+"</td>" + "<td>"+table[i].OnHand+"</td>"+"<td>"+table[i].branchName+"</td>"+ "<td>"+table[i].authorFirst+"</td>"  + "<td>"+table[i].authorLast+"</td>" + "<td>"+table[i].sequence+"</td>" + "<td>"+table[i].publisherName+"</td>" +"</tr>");
 			}
 			console.log(table_body_html);
 			$('#sql_table').html(table_head_html+table_body_html);
