@@ -227,16 +227,13 @@
 		socket.on("results" ,function(data){
 				current_table_data = data;
 				//console.log(data);
-				display(current_table_data);
+				show_table(current_table_data);
 			});
 		 
 
 		 function display(bookData) {
 
             //document.getElementById("GETTEST").innerHTML = request["ISBN"];
-            
-            for(var i = 0; i < table.length; i++)
-			{
 				document.getElementById("ISBN").innerHTML = bookData.ISBN;
                 document.getElementById("title").innerHTML = bookData.title;
                 document.getElementById("genere").innerHTML = bookData.genere;
@@ -246,7 +243,6 @@
                 document.getElementById("publisher").innerHTML = bookData.publisher;
                 document.getElementById("descript").innerHTML = bookData.descript;
                 document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
-			}
         }
 
 		$(document).ready(function () {
@@ -344,7 +340,8 @@
 			console.log(table);
 			for(var i = 0; i < table.length; i++)
 			{
-				table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].title+"</td>" + "<td>"+table[i].OnHand+"</td>"+"<td>"+table[i].branchName+"</td>"+ "<td>"+table[i].authorFirst+"</td>"  + "<td>"+table[i].authorLast+"</td>" + "<td>"+table[i].sequence+"</td>" + "<td>"+table[i].publisherName+"</td>" +"</tr>");
+                display(table[i]);
+				//table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].title+"</td>" + "<td>"+table[i].OnHand+"</td>"+"<td>"+table[i].branchName+"</td>"+ "<td>"+table[i].authorFirst+"</td>"  + "<td>"+table[i].authorLast+"</td>" + "<td>"+table[i].sequence+"</td>" + "<td>"+table[i].publisherName+"</td>" +"</tr>");
 			}
 			console.log(table_body_html);
 			$('#sql_table').html(table_head_html+table_body_html);
