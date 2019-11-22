@@ -63,6 +63,75 @@ io.on('connection', function(socket){
             console.error("ERROR: getCart: userID == null");
         }
 	});
+	
+    //query to add to cart in databse
+	socket.on('addToCart', function (bookData){
+		if(bookData != null){
+			var query = "INSERT INTO cart VALUES ('" + bookData.userID + "','" + bookData.ISBN + "','1')";
+			database.query(query, function (error, results, fields){
+				if (error){
+					console.error(error);
+				}
+				else{
+					console.log("done");
+				}
+			});
+		}
+		else{
+			console.error("ERROR: bookData == null");
+		}
+		
+	});
+
+	//add item quantity in cart
+	socket.on('incrementQuantity', function(userID, ISBN){
+		if(userID != null && ISBN != null ){
+			database.query("UPDATE cart SET quantity = cart.quantity + 1 WHERE userID = '" + userID + "' AND ISBN = '"+ ISBN + "';");
+			if (error){
+				console.error(error);
+			}
+			else{
+				console.log("done");
+			}
+		}
+		else{
+			console.log("Error: userID or ISBN == null");
+		}
+	});
+
+	//subtract item quantity in cart
+	socket.on('decrementQuantity', function(userID, ISBN){
+		if(userID != null && ISBN != null ){
+			database.query("UPDATE cart SET quantity = cart.quantity - 1 WHERE userID = '" + userID + "' AND ISBN = '"+ ISBN + "';");
+			if (error){
+				console.error(error);
+			}
+			else{
+				console.log("done");
+			}
+		}
+		else{
+			console.log("Error: userID or ISBN == null");
+		}
+	});
+
+	//clears cart for given userID
+	socket.on('clearCart', function(userID){
+		if(userID !=null){
+			database.query("DELETE FROM cart WHERE userID = '" + userID + "'", function(error, rating, fields){
+				if(error){
+					console.error(error);
+				}
+				else{
+					console.log("done");
+				}
+			})
+		}
+		else{
+			console.log("Error: userID == null");
+		}
+		
+	});
 
     socket.on('bookRating', function (ISBN) {
         if (ISBN != null) {
