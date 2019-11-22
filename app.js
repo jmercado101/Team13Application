@@ -71,7 +71,7 @@ io.on('connection', function(socket){
                     console.error(error);
                 }
                 else {
-                    if (rating != null) {
+                    if (rating[0].rating != null) {
                         console.log(rating);
                         socket.emit('ratingResult', rating[0].rating.toFixed(1));
                     }
