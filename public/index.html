@@ -46,7 +46,7 @@
 					<i class="fas fa-window-close" onclick="hideCart()"></i>
 				</span>
 				<h2>your cart</h2>
-				<div class="cart-content">
+				<div class="cart-content" id="cart-content">
 					<!-- cart item-->
 					<div class="cart-item">
 						
@@ -70,7 +70,7 @@
 				console.log('The server told me ' + message);
 			});
 		});
-		
+		//Beginning of Nawaz's Cart BS
 		function showCart(){
 			document.getElementById("cart-overlay").classList.add("transparentBcg");
 			document.getElementById("cart").classList.add("showCart");
@@ -80,8 +80,43 @@
 			document.getElementById("cart-overlay").classList.remove("transparentBcg");
 			document.getElementById("cart").classList.remove("showCart");
 		}
+
+		var current_table_data = [];
+        var socket = io();//open socket
+        $(document).ready(function () {
+			socket.emit('getCart', userID); //don't know where userID is coming from, yet.            
+			console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on("cartDetails", function (data) {
+                bookData = data;
+                //console.log(data);
+                addCartItem(bookData);
+            });
+		});
 		
-	</script>
+
+        //function adds item to visual cart
+        function addCartItem(bookData){
+            const div = document.createElement('div');
+            div.classList.add('cart-item');
+            div.innerHTML = `
+            <img src=${bookData.coverURL} alt="product"/>
+            <div>
+                <h4>${bookData.title}</h4>
+                <h5>$${bookData.price}</h5>
+                <span class="remove-item" data-id=${bookData.ISBN}>remove</span>
+            </div>
+            <div>
+                <i class="fas fa-chevron-up" data-id=${bookData.ISBN}></i>
+                <p class="item-amount">${bookData.quantity}</p>
+                <i class="fas fa-chevron-down" data-id=${bookData.ISBN}></i>
+            </div>
+            `
+            document.getElementById("cart-content").appendChild(div);
+        }
+		
+		</script>
 	
 	<style>
 
