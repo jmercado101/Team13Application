@@ -1,14 +1,34 @@
 <head>
     <title>Books Database</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+<!--<link rel="stylesheet" type="text/css" href="styles.css"> -->
     <script src="/socket.io/socket.io.js"></script>
 	<script src="jquery-3.3.1.min.js"></script>
+	<script src="https://kit.fontawesome.com/480ae34729.js" crossorigin="anonymous"></script>
 </head>
 <body>
 	
-	<h1>HOME</h1><br/>
+	<!-- <h1>HOME</h1><br/> -->
+
+	<div class="topnav">
+			
+		<img href="#image"></img>
+		<a class="active" href="#home">Home</a>
+		<a href="#books">Books</a>
+		<a href="#best_sellers">Best Sellers</a>
+		<a href="#new_releases">New Releases</a>
+		<a href="#login" id="login">Log In / Register</a>
+		<div class="cart-btn">
+			<span class="nav-icon">
+				<i class="fas fa-cart-plus" onclick="showCart()"></i>
+			</span>
+			<div class="cart-items" id="cart-items">0</div>
+		</div>
+
+	</div>
 
 	<ul>
+		<br><br><br>
+        <li><a href='./pages/bookDetails.html'>TEST PAGE</a> <span> All authors</span> </li>
 		<li><a href='./pages/authors.html'>Authors:</a> <span> All authors</span> </li>
 		<li><a href='./pages/books.html'>Books:</a> <span> All books</span> </li>
 		<li><a href='./pages/copies.html'>Copies:</a> <span> All copies</span> </li>
@@ -20,14 +40,275 @@
 		
 	</ul>
 
+	<div class="cart-overlay" id="cart-overlay">
+			<div class="cart" id="cart">
+				<span class="close-cart">
+					<i class="fas fa-window-close" onclick="hideCart()"></i>
+				</span>
+				<h2>your cart</h2>
+				<div class="cart-content" id="cart-content">
+					<!-- cart item-->
+					<div class="cart-item">
+						
+					</div>
+					<!-- end of cart item-->
+				</div>
+				<div class="cart-footer">
+					<h3>your total: $<span class="cart-total" id="cart-total">0</span></h3>
+					<button class="clear-cart banner-btn" onclick="clearCart()">CLEAR CART</button>
+				</div>
+			</div>
+		</div>
+
+
     <script>
+		//console.log("HELLO1")
 		var socket = io();//auto-discovery
 		$(document).ready(function(){ 
+		//	console.log("Hellow2")
 			///Event Listeners
 			//logs current users
 			socket.on("server found" ,function(message){
 				console.log('The server told me ' + message);
 			});
 		});
-    </script>
+		//Beginning of Nawaz's Cart BS
+		function showCart(){
+			document.getElementById("cart-overlay").classList.add("transparentBcg");
+			document.getElementById("cart").classList.add("showCart");
+		}
+
+		function hideCart(){
+			document.getElementById("cart-overlay").classList.remove("transparentBcg");
+			document.getElementById("cart").classList.remove("showCart");
+		}
+
+		var current_table_data = [];
+        var socket = io();//open socket
+        $(document).ready(function () {
+			//console.log("HELLO WORLD")
+			console.log("works outside function");
+			socket.emit('getCart', 1); //don't know where userID this is coming from, yet.            
+			console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on('cartDetails', function (data) {
+                bookData = data;
+                //console.log(data);
+				addCartItem(bookData);
+				setCartValues(bookData);
+            });
+		});
+		
+
+        //function adds item to visual cart
+        function addCartItem(bookData){
+            const div = document.createElement('div');
+			div.classList.add('cart-item');
+			bookData.forEach(book => {
+				console.log(book);
+				div.innerHTML = `
+				<img src=${book.coverURL} alt="product"/>
+				<div>
+					<h4>${book.title}</h4>
+					<h5>$${book.price}</h5>
+					<span class="remove-item" data-id=${book.ISBN}>remove</span>
+				</div>
+				<div>
+					<i class="fas fa-chevron-up" data-id=${book.ISBN} onclick="incrementCart(${book.ISBN}, ${book.price})"></i>
+					<p class="item-amount" id=${book.ISBN}>${book.quantity} </p>
+					<i class="fas fa-chevron-down" data-id=${book.ISBN} onclick="decrementCart(${book.ISBN}, ${book.price})"></i>
+				</div>
+				`
+				document.getElementById("cart-content").appendChild(div);
+				var i = 1;
+				console.log("addtocart" + i);
+				i ++;
+			});
+		}
+		
+		let tempTotal = 0;
+		let itemsTotal = 0;
+
+		function setCartValues(cart){
+			
+			cart.map(item => {
+				tempTotal += item.price * item.quantity;
+				itemsTotal += item.quantity;
+			});
+			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
+			document.getElementById("cart-items").innerText = itemsTotal/2;
+		}
+
+		function incrementCart(ISBN, price){
+			console.log("working");
+			document.getElementById(ISBN).innerText ++;
+			tempTotal += price
+			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
+			//var current_table_data = [];
+			//var socket = io();//open socket
+			//$(document).ready(function () {
+			//	console.log("HELLO WORLD");
+			//	socket.emit('incrementQuantity', (1, ISBN)); //don't know where userID this is coming from, yet.            
+			//	console.log("Bye world.")
+				///Event Listeners
+				//logs current users
+			//});
+		}
+
+		function decrementCart(ISBN, price){
+			console.log("working");
+			document.getElementById(ISBN).innerText --;
+			tempTotal -= price
+			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
+		}
+		
+		function clearCart(){
+			console.log("clear cart called");
+			document.getElementById("cart-total").innerText = 0;
+			document.getElementById("cart-items").innerText = 0;
+			document.getElementById("cart-content").remove();
+		}
+		</script>
+	
+	<style>
+
+		.topnav {
+            background-color: #DDDDDD;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+		.topnav a {
+	        float: left;
+			color: #001f3f;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+            }
+
+        .topnav a:hover {
+                    background-color: #ddd;
+                    color: orange;
+                }
+
+        .topnav a.active {
+                    color: orange;
+                }
+
+        #login {
+            float: right !important;
+            margin-right: 50px;
+		}
+
+
+		:root {
+ 			 --primaryColor: #33AEFF;
+  			--mainWhite: #fff;
+  			--mainBlack: #222;
+			--mainGrey: #000000;
+			--mainSpacing: 0.1rem;
+			--mainTransition: all 0.3s linear;
+		}
+		.cart-overlay {
+			position: fixed;
+			top: 0;
+			right: 0;
+			width: 100%;
+			height: 100%;
+			transition: var(--mainTransition);
+			background: hsl(204, 100%, 60% , .5);
+			z-index: 2;
+			visibility: hidden;
+			}
+
+		.cart {
+			position: fixed;
+			top: 0;
+			right: 0;
+			width: 100%;
+			height: 100%;
+			overflow: scroll;
+			z-index: 3;
+			background: #E5E7E9;
+			padding: 1.5rem;
+			transition: var(--mainTransition);
+			transform: translateX(100%);
+			}
+		.showCart {
+			transform: translateX(0);
+			}
+		.transparentBcg {
+			visibility: visible;
+			}
+
+		@media screen and (min-width: 768px) {
+			.cart {
+				width: 30vw;
+				min-width: 450px;
+			}
+		}
+
+		.nav-icon {
+			font-size: 1.5rem;
+		}
+		.cart-btn {
+			position: relative;
+			cursor: pointer;
+		}
+
+		.close-cart {
+			font-size: 1.7rem;
+			cursor: pointer;
+			}
+		.cart h2 {
+			text-transform: capitalize;
+			text-align: center;
+			letter-spacing: var(--mainSpacing);
+			margin-bottom: 2rem;
+			}
+		.cart-item {
+				display: grid;
+				align-items: center;
+				grid-template-columns: auto 1fr auto;
+				grid-column-gap: 1.5rem;
+				margin: 1.5rem 0;
+		}
+		.cart-item img {
+				width: 75px;
+				height: 75px;
+		}
+		.cart-item h4 {
+				font-size: 0.85rem;
+				text-transform: capitalize;
+				letter-spacing: var(--mainSpacing);
+		}
+		.cart-item h5 {
+				margin: 0.5rem 0;
+				letter-spacing: var(--mainSpacing);
+		}
+		.item-amount {
+				text-align: center;
+		}
+		.remove-item {
+				color: grey;
+				cursor: pointer;
+		}
+		.fa-chevron-up,
+		.fa-chevron-down {
+				color: var(--primaryColor);
+				cursor: pointer;
+		}
+		.cart-footer {
+   			 margin-top: 2rem;
+  			letter-spacing: var(--mainSpacing);
+  			text-align: center;
+		}
+		.cart-footer h3 {
+  			text-transform: capitalize;
+  			margin-bottom: 1rem;
+		}
+	</style>
 </body>
