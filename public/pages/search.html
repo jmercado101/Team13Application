@@ -1,6 +1,6 @@
 <head>
     <title>Books Database</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+
     <script src="/socket.io/socket.io.js"></script>
 	<script src="./../jquery-3.3.1.min.js"></script>
 
@@ -226,25 +226,27 @@
             var pair = pairs[i].split('=');
             request[pair[0]] = pair[1];
         }
+        var socket = io();
         $(document).ready(function () {
+            
             var search_key = request["authorID"];
             if (search_key != null) {
+                console.log("AuthorSearch.")
                 socket.emit("author search", search_key);
             }
 
-		    var socket = io();
 		    var current_table_data =  [];
-		    function search_database() {
-			    var search_key = document.getElementById('1').value;
-			    socket.emit("search database", search_key);
-		    }
             socket.on("table result" ,function(data) {
 				    current_table_data = data;
-				    //console.log(data);
+				    console.log(data);
 				    show_table(current_table_data);
             });
         });
-		 
+
+        function search_database() {
+            var search_key = document.getElementById('1').value;
+            socket.emit("search database", search_key);
+        }
 
 		 function display(bookData) {
 
