@@ -18,6 +18,31 @@
 		tr:nth-child(even) {
 			background-color: #dddddd;
 		}
+		.topnav {
+        background-color: #DDDDDD;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    .topnav a {
+        float: left;
+        color: #001f3f;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+    .topnav a:hover {
+        background-color: #ddd;
+        color: orange;
+    }
+
+    .topnav a.active {
+        color: orange;
+    }
 	</style>
 </head>
 
@@ -27,6 +52,23 @@
 	<h1>BOOKS</h1><br/>
 
     <li><a href='./../index.html'><span>Home</span></a></li>
+		      <div class="NavigationBox">
+             <div class="topnav">
+             <div class="header">
+                 <a href="/"><img src="/images/Logo.png" /></a>
+             </div>
+             <a href="./../index.html">Home</a>
+             <a href="/pages/search/">Search</a>
+             <a href="/pages/register/">Register</a>
+             <a href="/pages/login/" id= "login">Log In</a>
+             <div class="cart-btn">
+                 <span class="nav-icon">
+                     <i class="fas fa-cart-plus"></i>
+                 </span>
+                 <div class="cart-items">0</div>
+             </div>
+ </div>
+
 
 	<table id='sql_table'></table>
 
