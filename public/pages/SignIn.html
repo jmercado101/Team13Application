@@ -1,0 +1,118 @@
+﻿<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./../jquery-3.3.1.min.js"></script>
+
+    <title>Details</title>
+
+    <style type=text/css>
+
+        .header {
+            width: 100%;
+            height: 10%;
+            background-color: green;
+        }
+
+        .mainBody {
+            width: 100%;
+            height: 90%;
+        }
+
+        .NavigationBox {
+            background-color: blue;
+            width: 15%;
+            height: 100%;
+            float: left;
+        }
+
+        .productBox {
+            margin-left: 15%;
+            width: 85%;
+            height: 100%;
+            background-color: red;
+        }
+
+        .productTree {
+            padding-top: 0.50%;
+            padding-left: 20px;
+            height: 3%;
+            background-color: orange;
+        }
+
+        h1, h2, h3, h4 {
+            display: inline;
+        }
+
+    </style>
+
+
+    <script>
+
+        var request = {};
+        var pairs = location.search.substring(1).split('&');
+        for (var i = 0; i < pairs.length; i++) {
+            var pair = pairs[i].split('=');
+            request[pair[0]] = pair[1];
+        }
+        var socket = io();//open socket
+        $(document).ready(function () {
+
+            var email = "testyboi@test.net";
+            var password = "testPassword";
+
+            socket.emit('signIn', email, password);
+            console.log('Attempting to log in.');
+            ///Event Listeners
+
+            socket.on("authenticated", function (token, ID) {
+                if (token == "invalidLogin") {
+                    alert("Invalid Login.");
+                }
+                else {;
+                    setCookie("auth", "token=" + escape(token) + "&ID=" + escape(ID), 1);
+                }
+            });
+
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+        });
+
+
+
+    </script>
+
+
+
+</head>
+<body>
+
+    <div class="header">
+        <h1>GeekText</h1>
+    </div>
+
+    <div class="mainBody">
+        <div class="NavigationBox">
+
+        </div>
+
+
+        <div class="productBox">
+
+            <nav class="productTree">
+                Top > subCat > Toppic
+            </nav>
+
+            <!-- ALL CODE FOR SITE GOES INSIDE OF HERE.  THIS WILL BE THE RED DIV-->
+
+        </div>
+    </div>
+
+</body>
+
+</html>
