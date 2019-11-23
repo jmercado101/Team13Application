@@ -8,39 +8,45 @@
 <body>
 	
 	<!-- <h1>HOME</h1><br/> -->
-
-	<div class="topnav">
+    <div class="wholePage">
+	    <div class="topnav">
 			
-		<img href="#image"></img>
-		<a class="active" href="#home">Home</a>
-		<a href="#books">Books</a>
-		<a href="#best_sellers">Best Sellers</a>
-		<a href="#new_releases">New Releases</a>
-		<a href="pages/signin.html" id="login">Log In / Register</a>
-		<div class="cart-btn">
-			<span class="nav-icon">
-				<i class="fas fa-cart-plus" onclick="showCart()"></i>
-			</span>
-			<div class="cart-items">0</div>
-		</div>
+            <a href="/"><img src="/images/Logo.png" /></a>
+            <navLinks>
+                <a href="pages/books.html">Books</a>
+                <a href="pages/register.html">Register</a>
+                <a href="pages/login.html" id="login">Log In</a>
+                <div class="cart-btn">
+                    <span class="nav-icon">
+                        <i class="fas fa-cart-plus" onclick="showCart()"></i>
+                    </span>
+                    <div class="cart-items" id="cart-items">0</div>
+                </div>
+            </navLinks>
 
-	</div>
+	    </div>
+        <div class="mainPage">
 
-	<ul>
-		<br><br><br>
-        <li><a href='./pages/bookDetails.html'>TEST PAGE</a> <span> All authors</span> </li>
-		<li><a href='./pages/authors.html'>Authors:</a> <span> All authors</span> </li>
-		<li><a href='./pages/books.html'>Books:</a> <span> All books</span> </li>
-		<li><a href='./pages/copies.html'>Copies:</a> <span> All copies</span> </li>
-		<li><a href='./pages/publishers.html'>Publishers:</a> <span> All publishers</span></li>
-		<li><a href='./pages/search.html'>Search:</a> <span> Find information about a book</span></li>
-		<li><a href='./pages/delete.html'>Delete:</a> <span> delete a table value</span> </li>
-		<li><a href='./pages/add.html'>Add:</a> <span> add a table value </span> </li>
-		<li><a href='./pages/modify.html'>Modify:</a> <span> modify a table value</span> </li>
-		
-	</ul>
+            <ul>
+                <li><a href='./pages/bookDetails.html?ISBN=1234567890123'>Details for TestBook</a></li>
+                <!--
+                <li><a href='./pages/authors.html'>Authors:</a> <span> All authors</span> </li>
+                <li><a href='./pages/books.html'>Books:</a> <span> All books</span> </li>
+                <li><a href='./pages/copies.html'>Copies:</a> <span> All copies</span> </li>
+                <li><a href='./pages/publishers.html'>Publishers:</a> <span> All publishers</span></li>
+                -->
+                <li><a href='./pages/search.html'>Search:</a> <span> Find information about a book</span></li>
+                <!--
+                <li><a href='./pages/delete.html'>Delete:</a> <span> delete a table value</span> </li>
+                <li><a href='./pages/add.html'>Add:</a> <span> add a table value </span> </li>
+                <li><a href='./pages/modify.html'>Modify:</a> <span> modify a table value</span> </li>
+                -->
 
-	<div class="cart-overlay" id="cart-overlay">
+            </ul>
+
+        </div>
+
+	    <div class="cart-overlay" id="cart-overlay">
 			<div class="cart" id="cart">
 				<span class="close-cart">
 					<i class="fas fa-window-close" onclick="hideCart()"></i>
@@ -54,16 +60,18 @@
 					<!-- end of cart item-->
 				</div>
 				<div class="cart-footer">
-					<h3>your total: $<span class="cart-total">0</span></h3>
-					<button class="clear-cart banner-btn">clear cart</button>
+					<h3>your total: $<span class="cart-total" id="cart-total">0</span></h3>
+					<button class="clear-cart banner-btn" onclick="clearCart()">CLEAR CART</button>
 				</div>
 			</div>
 		</div>
-
+    </div>
 
     <script>
+		//console.log("HELLO1")
 		var socket = io();//auto-discovery
 		$(document).ready(function(){ 
+		//	console.log("Hellow2")
 			///Event Listeners
 			//logs current users
 			socket.on("server found" ,function(message){
@@ -81,41 +89,97 @@
 			document.getElementById("cart").classList.remove("showCart");
 		}
 
-		var current_table_data = [];
-        var socket = io();//open socket
+		//var current_table_data = [];
+        //var socket = io();//open socket
         $(document).ready(function () {
-			socket.emit('getCart', userID); //don't know where userID is coming from, yet.            
+			//console.log("HELLO WORLD")
+			//console.log("works outside function");
+			socket.emit('getCart', 1); //don't know where userID this is coming from, yet.            
 			console.log('Sent request to server');
             ///Event Listeners
             //logs current users
-            socket.on("cartDetails", function (data) {
+            socket.on('cartDetails', function (data) {
                 bookData = data;
                 //console.log(data);
-                addCartItem(bookData);
+				addCartItem(bookData);
+				setCartValues(bookData);
             });
 		});
 		
 
         //function adds item to visual cart
         function addCartItem(bookData){
-            const div = document.createElement('div');
-            div.classList.add('cart-item');
-            div.innerHTML = `
-            <img src=${bookData.coverURL} alt="product"/>
-            <div>
-                <h4>${bookData.title}</h4>
-                <h5>$${bookData.price}</h5>
-                <span class="remove-item" data-id=${bookData.ISBN}>remove</span>
-            </div>
-            <div>
-                <i class="fas fa-chevron-up" data-id=${bookData.ISBN}></i>
-                <p class="item-amount">${bookData.quantity}</p>
-                <i class="fas fa-chevron-down" data-id=${bookData.ISBN}></i>
-            </div>
-            `
-            document.getElementById("cart-content").appendChild(div);
-        }
+			//var i = 1;
+			bookData.forEach(book => {
+				console.log(book);
+				const div = document.createElement('div');
+				div.classList.add('cart-item');
+				div.innerHTML = `
+				<img src=${book.coverURL} alt="product"/>
+				<div>
+					<h4>${book.title}</h4>
+					<h5>$${book.price}</h5>
+					<span class="remove-item" data-id=${book.ISBN} onclick="remove(${book.ISBN})">remove</span>
+				</div>
+				<div>
+					<i class="fas fa-chevron-up" data-id=${book.ISBN} onclick="incrementCart(${book.ISBN}, ${book.price})"></i>
+					<p class="item-amount" id=${book.ISBN}>${book.quantity} </p>
+					<i class="fas fa-chevron-down" data-id=${book.ISBN} onclick="decrementCart(${book.ISBN}, ${book.price})"></i>
+				</div>
+				`
+				document.getElementById("cart-content").appendChild(div);
+				//console.log("addtocart" + i);
+				//i ++;
+			});
+		}
 		
+		let tempTotal = 0;
+		let itemsTotal = 0;
+
+		function setCartValues(cart){
+			
+			cart.map(item => {
+				tempTotal += item.price * item.quantity;
+				itemsTotal += item.quantity;
+			});
+			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
+			document.getElementById("cart-items").innerText = itemsTotal;
+		}
+
+		function incrementCart(ISBN, price){
+			console.log("working");
+			document.getElementById(ISBN).innerText ++;
+			tempTotal += price
+			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
+			socket.on('incrementQuantity', (1, 1234567890123));
+			//var current_table_data = [];
+			//var socket = io();//open socket
+			//$(document).ready(function () {
+			//	console.log("HELLO WORLD");
+			//	socket.emit('incrementQuantity', (1, ISBN)); //don't know where userID this is coming from, yet.            
+			//	console.log("Bye world.")
+				///Event Listeners
+				//logs current users
+			//});
+		}
+
+		function decrementCart(ISBN, price){
+			console.log("working");
+			document.getElementById(ISBN).innerText --;
+			tempTotal -= price
+			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
+		}
+		
+		function clearCart(){
+			console.log("clear cart called");
+			document.getElementById("cart-total").innerText = 0;
+			document.getElementById("cart-items").innerText = 0;
+			document.getElementById("cart-content").remove();
+		}
+
+		function remove(){
+
+		}
 		</script>
 	
 	<style>
@@ -125,40 +189,45 @@
             overflow: hidden;
             position: fixed;
             top: 0;
+            height: 82px;
             width: 100%;
         }
-		.topnav a {
-	        float: left;
-			color: #001f3f;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
-                font-size: 17px;
-            }
+        .topnav img {
+            float: left;
+        }
+
+        .topnav navLinks {
+            float: left;
+            color: #001f3f;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
 
         .topnav a:hover {
-                    background-color: #ddd;
-                    color: orange;
-                }
+            background-color: #ddd;
+            color: orange;
+        }
 
         .topnav a.active {
                     color: orange;
                 }
+        .mainPage
+        {
+            padding-top: 82px;
+            width: 100%;
+        }
 
-        #login {
-            float: right !important;
-            margin-right: 50px;
-		}
 
-
-		:root {
- 			 --primaryColor: #33AEFF;
-  			--mainWhite: #fff;
-  			--mainBlack: #222;
-			--mainGrey: #000000;
-			--mainSpacing: 0.1rem;
-			--mainTransition: all 0.3s linear;
-		}
+        :root {
+            --primaryColor: #33AEFF;
+            --mainWhite: #fff;
+            --mainBlack: #222;
+            --mainGrey: #000000;
+            --mainSpacing: 0.1rem;
+            --mainTransition: all 0.3s linear;
+        }
 		.cart-overlay {
 			position: fixed;
 			top: 0;

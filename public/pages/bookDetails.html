@@ -14,8 +14,21 @@
 
             .header {
                 width: 100%;
-                height: 10%;
+                height: 82px;
                 background-color: green;
+            }
+
+            .header img
+            {
+                float: left;
+            }
+            .header navLinks {
+                float: left;
+                color: #001f3f;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
             }
 
             .mainBody {
@@ -321,9 +334,14 @@
     </head>  
     <body>
 
-		<div class="header">
+        <div class="header">
             <a href="/"><img src="/images/Logo.png" /></a>
-		</div>
+            <navLinks>
+                <a href="/pages/books.html">Books</a>
+                <a href="register.html">Register</a>
+                <a href="/pages/login.html" class="login">Log In</a>
+            </navLinks>
+        </div>
 
 		<div class="mainBody">
 			<div class="NavigationBox">
