@@ -134,8 +134,62 @@ io.on('connection', function(socket){
     });
 
     // END NEW CODE
+		
+     socket.on('add user', function (payload) {
+        var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email + "'OR users.nickname = '" + payload.nickname + "')";
+        database.query(checkDuplicate, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('userResult', payload);
+            }
+            if (results.length) {
+                console.log("Username or Email taken");
+                payload.log = "false";
+                socket.emit('userResult', payload);
+            }
+            else {
+                console.log("The username and email will be registered");
+                var query = "INSERT INTO users (fName, lName, email, nickname, passwd) VALUES('" + payload.fName + "','" + payload.lName + "','" + payload.email + "','" + payload.nickname + "','" + payload.passwd + "')";//build query, all fields are necessary in add page		
+                database.query(query, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                    socket.emit('table result', results);
+                });
+                payload.log = "true";
+                socket.emit('userResult', payload);
+            }
+        })
+    });
 
-
+    socket.on('search user', function (payload) {
+        var getPassword = "SELECT passwd FROM users WHERE users.email = '" + payload.email + "'";
+        database.query(getPassword, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('loginResult', payload);
+            }
+            if (results.length) {
+                console.log(getPassword);
+                if (results[0].passwd == payload.passwd) {
+                    payload.log = "true";
+                    socket.emit('loginResult', payload);
+                }
+                else {
+                    console.log("Invalid Credentials");
+                    payload.log = "false";
+                    socket.emit('loginResult', payload);
+                }
+            }
+            else {
+                console.log("Invalid Credentials");
+                payload.log = "false";
+                socket.emit('loginResult', payload);
+            }
+        })
+    });
+	
     //socket on add ratings NEW
     socket.on('addRatings', function (payload) {
         var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comment + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
