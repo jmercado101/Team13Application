@@ -226,24 +226,24 @@
             var pair = pairs[i].split('=');
             request[pair[0]] = pair[1];
         }
+        $(document).ready(function () {
+            var search_key = request["authorID"];
+            if (search_key != null) {
+                socket.emit("author search", search_key);
+            }
 
-        var search = request["authorID"];
-        if(search != null){
-            var search_key = search;
-            socket.emit("author search", search_key);
-        }
-
-		var socket = io();
-		var current_table_data =  [];
-		function search_database(){
-			var search_key = document.getElementById('1').value;
-			socket.emit("search database", search_key);
-		}
-		socket.on("results" ,function(data){
-				current_table_data = data;
-				//console.log(data);
-				show_table(current_table_data);
-			});
+		    var socket = io();
+		    var current_table_data =  [];
+		    function search_database() {
+			    var search_key = document.getElementById('1').value;
+			    socket.emit("search database", search_key);
+		    }
+            socket.on("table result" ,function(data) {
+				    current_table_data = data;
+				    //console.log(data);
+				    show_table(current_table_data);
+            });
+        });
 		 
 
 		 function display(bookData) {
