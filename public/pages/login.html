@@ -88,6 +88,11 @@
 
                                 socket.emit('signIn', email, password);
                                 console.log('Attempting to log in.');
+                                socket.on("allInfo",function(nickname, fName, lName){
+                                    sessionStorage.nickname = nickname;
+                                    sessionStorage.fName = fName;
+                                    sessionStorage.lName = lName;
+                                })
 
                                 socket.on("authenticated", function (token, ID) {
                                     if (token == "invalidLogin") {
