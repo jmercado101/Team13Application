@@ -133,6 +133,32 @@
             padding-bottom: 13px;
             /*background-color: blue; */
         }
+		
+		.topnav {
+        background-color: #DDDDDD;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    .topnav a {
+        float: left;
+        color: #001f3f;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+    .topnav a:hover {
+        background-color: #ddd;
+        color: orange;
+    }
+
+    .topnav a.active {
+        color: orange;
+    }
 
 		</style>
 </head>
@@ -140,8 +166,22 @@
 <body>
 
 	<h1>Search</h1><br/>
-	<li><a href='./../index.html'><span>Home</span></a></li>
-	<h4>Select a book to search for </h4>
+<div class="NavigationBox">
+<div class="topnav">
+<div class="header">
+    <a href="/"><img src="/images/Logo.png" /></a>
+</div>
+<a href="./../index.html">Home</a>
+<a href="/search/">Search</a>
+<a href="/register/">Register</a>
+<a href="/login/" id= "login">Log In</a>
+<div class="cart-btn">
+    <span class="nav-icon">
+        <i class="fas fa-cart-plus"></i>
+    </span>
+    <div class="cart-items">0</div>
+</div>
+</div>	<h4>Select a book to search for </h4>
 	<input id='1' placeholder='SEARCH'>
 	<input type='submit'  id = 'submit' value='Submit' onClick = 'search_database()'>
 	
