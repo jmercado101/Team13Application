@@ -130,8 +130,55 @@
                 color: #c59b08;
             }
     </style>
-    
+
     <script src="https://kit.fontawesome.com/480ae34729.js" crossorigin="anonymous"></script>
+    <script>
+        /*
+        $(document).ready(function () {
+            getUserID();
+        });
+        */
+        function getUserID() {
+            var authCookie = getCookie("auth");
+
+            //console.log(authCookie);
+
+            if (authCookie != "") {
+                var cookie = {};
+                var pairs = authCookie.split('&');
+                for (var i = 0; i < pairs.length; i++) {
+                    var pair = pairs[i].split('=');
+                    cookie[pair[0]] = pair[1];
+                }
+                //console.log(cookie['token']);
+                //console.log(cookie['ID']);
+                return cookie['ID'];
+            }
+            else {
+                alert("You must be logged in to leave a review.");
+                document.location.href = "bookDetails.html?ISBN=" + request["ISBN"];
+                return null;
+            }
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+
+        }
+
+    </script>
 </head>
 
 <body>
@@ -211,7 +258,7 @@
             
             var payload = {
                 ISBN: request["ISBN"],
-                user_id: request["id"],
+                user_id: getUserID(),
                 anonymity: checkAnonymity(),
                 rate: checkRating(),
                 comment: document.getElementById('comments').value

@@ -1,8 +1,9 @@
 //Inital Variables
 var express = require('express');
 var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const crypto = require('crypto');
 var path = require('path');
 
 //EXPRESS
@@ -92,7 +93,7 @@ io.on('connection', function(socket){
     });
 
     socket.on('purchased', function (ISBN, ID) {
-        if (ISBN != null || ID != null) {
+        if (ISBN != null && ID != null) {
             database.query("SELECT count(*) AS count FROM purchased WHERE EXISTS (SELECT * FROM purchased WHERE purchased.ID = " + ID + " AND purchased.ISBN = " + ISBN + ")", function (error, purchased, fields) {
                 if (error) {
                     console.error(error);
@@ -168,7 +169,63 @@ io.on('connection', function(socket){
 		console.log(results);
 		socket.emit('table result', results);
 	});
-  });
+    });
+
+    //Sign In check
+    socket.on('signIn', function (email, password) {
+        if (email != null && password != null) {
+            console.log('Attemted sign in from: ' + email);
+            database.query("SELECT * FROM users WHERE email = '" + email + "'", function (error, users, fields) {
+                if(error)
+                {
+                    console.error(error);
+                }
+                else
+                {
+                    if (hashPassword(password) == users[0].passwd) {
+                        console.log("Success!")
+                        socket.emit('authenticated', generateToken(users[0].passwd, users[0].email, users[0].ID), users[0].ID);
+                    }
+                    else {
+                        console.log("Failure.  Invalid Login.")
+
+                        console.log("Password mismatch:");
+                        console.log(hashPassword(password));
+                        console.log(users[0].passwd);
+                        socket.emit('authenticated', "invalidLogin", null);
+                    }
+                }
+                
+            });
+        }
+    });
+
+    function generateToken(hashedPassword, email, userID) {
+        return crypto.createHash('sha512').update(hashedPassword + email + userID).digest('hex');
+    }
+    function hashPassword(inPassword) {
+        return crypto.createHash('sha512').update(inPassword).digest('hex');
+    }
+    function checkToken(providedToken, userID)
+    {
+        if (providedToken != null && userID != null)
+        {
+            database.query("SELECT * FROM users WHERE ID = '" + userID + "'", function (error, user, fields)
+            {
+                if (error)
+                {
+                    console.error(error);
+                }
+                else
+                {
+                    var knownToken = generateToken(user[0].passwd, user[0].email, user[0].ID);
+                    if (providedToken == knownToken) {
+                        console.log("User " + userID + " authenticated.");
+                    }
+                }
+            });
+        }
+    }
  
 
 });
