@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 
 <head>
     <script src="/socket.io/socket.io.js"></script>
@@ -94,8 +94,9 @@
                                         alert("Invalid Login.");
                                     }
                                     else {
+                                        sessionStorage.email = email;
                                         setCookie("auth", "token=" + escape(token) + "&ID=" + escape(ID), 1);
-                                        location.href = "/";
+                                        location.href = "profile.html";
                                     }
                                 });
 
