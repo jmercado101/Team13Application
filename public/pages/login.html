@@ -1,74 +1,135 @@
+﻿<html>
+
 <head>
-    <title>Books Database</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="./../jquery-3.3.1.min.js"></script>
-</head>
-
-
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <style>
-        html {
-            padding: 50px;
+
+    <title>Login</title>
+
+    <style type=text/css>
+
+        .header {
+            width: 100%;
+            height: 10%;
+            //background-color: green;
+        }
+
+        .mainBody {
+            width: 100%;
+            height: 90%;
+        }
+
+        .NavigationBox {
+            //background-color: blue;
+            width: 15%;
+            height: 100%;
+            float: left;
+        }
+
+        .productBox {
+            margin-left: 15%;
+            width: 85%;
+            height: 100%;
+            //background-color: red;
+        }
+
+        .productTree {
+            padding-top: 0.50%;
+            padding-left: 20px;
+            height: 10%;
+            //background-color: orange;
+        }
+
+        h1, h2, h3, h4 {
+            display: inline;
         }
     </style>
-</head>
 
+
+    
+
+
+
+</head>
 <body>
-    <div class="container">
-        <div class="col-sm-6 col-sm-offset-3">
-            <h2>Login</h2>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" class="form-control" name="email" id="email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" class="form-control" name="passwd" id="passwd">
-            </div>
-            <button type="submit" class="btn btn-succcess btn-lg" id="reg">
-                Login
-            </button>
-            <script>
-                document.getElementById('reg').onclick = function () {
-                    submit_user_form(document.getElementById('email').value, document.getElementById('passwd').value);
-                    var socket = io();
-                    function submit_user_form(email, passwd) {
-                        var payload = {
-                            email: email,
-                            passwd: passwd,
-                            log: passwd
+
+    <div class="header">
+        <a href="/"><img src="/images/Logo.png" /></a>
+    </div>
+
+    <div class="mainBody">
+        <div class="NavigationBox">
+
+        </div>
+
+
+        <div class="productBox">
+
+            <nav class="productTree"></nav>
+
+            <!-- ALL CODE FOR SITE GOES INSIDE OF HERE.  THIS WILL BE THE RED DIV-->
+
+            <div class="container">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <h2>Login</h2>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" name="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" name="passwd" id="passwd">
+                    </div>
+                    <button type="submit" class="btn btn-succcess btn-lg" id="reg">
+                        Login
+                    </button>
+                    <script>
+                        document.getElementById('reg').onclick = function () {
+                            submit_user_form(document.getElementById('email').value, document.getElementById('passwd').value);
                         }
-                        if (payload.email === '' || payload.passwd === '')
-                            alert('All fields are mandatory');
-                        else {
-                            var socket = io();
-                            $(document).ready(function () {
-                                socket.emit('search user', payload);
-                                socket.on("loginResult", function (data) {
-                                    payload = data;
-                                    if (payload.log == "true") {
-                                        alert("Login Success")
-                                        location.href = "profile.html";
+                        var socket = io();
+                        function submit_user_form(email, password) {
+
+                            if (email === '' || password === '')
+                                alert('All fields are mandatory');
+                            else {
+
+                                socket.emit('signIn', email, password);
+                                console.log('Attempting to log in.');
+
+                                socket.on("authenticated", function (token, ID) {
+                                    if (token == "invalidLogin") {
+                                        alert("Invalid Login.");
                                     }
                                     else {
-                                        alert("Invalid Credentials");
-                                        location.href = "login.html";
+                                        setCookie("auth", "token=" + escape(token) + "&ID=" + escape(ID), 1);
+                                        location.href = "/";
                                     }
                                 });
-                            });
+
+                                function setCookie(cname, cvalue, exdays) {
+                                    var d = new Date();
+                                    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                                    var expires = "expires=" + d.toUTCString();
+                                    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+                                }
+                            }
                         }
-                    }
-                }
-            </script>
-            <p>Need an account? <a href="register.html">Register here!</a></p>
-            <p>Go back to <a href="/">Homepage</a>.</p>
+                    </script>
+
+                    <p>Need an account? <a href="register.html">Register here!</a></p>
+                    <p>Go back to <a href="/">Homepage</a>.</p>
+                </div>
+            </div>
+
         </div>
     </div>
+
 </body>
+
+</html>

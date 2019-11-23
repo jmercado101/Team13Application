@@ -135,8 +135,8 @@ io.on('connection', function(socket){
 
     // END NEW CODE
 		
-     socket.on('add user', function (payload) {
-        var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email + "'OR users.nickname = '" + payload.nickname + "')";
+     socket.on('addUser', function (payload) {
+         var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email.toLowerCase() + "'OR users.nickname = '" + payload.nickname + "')";
         database.query(checkDuplicate, function (error, results, fields) {
             if (error) {
                 console.log("An error has occurred");
@@ -150,7 +150,7 @@ io.on('connection', function(socket){
             }
             else {
                 console.log("The username and email will be registered");
-                var query = "INSERT INTO users (fName, lName, email, nickname, passwd) VALUES('" + payload.fName + "','" + payload.lName + "','" + payload.email + "','" + payload.nickname + "','" + payload.passwd + "')";//build query, all fields are necessary in add page		
+                var query = "INSERT INTO users (fName, lName, email, nickname, passwd) VALUES('" + payload.fName + "','" + payload.lName + "','" + payload.email.toLowerCase() + "','" + payload.nickname + "','" + hashPassword(payload.passwd) + "')";//build query, all fields are necessary in add page		
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
@@ -158,34 +158,6 @@ io.on('connection', function(socket){
                 });
                 payload.log = "true";
                 socket.emit('userResult', payload);
-            }
-        })
-    });
-
-    socket.on('search user', function (payload) {
-        var getPassword = "SELECT passwd FROM users WHERE users.email = '" + payload.email + "'";
-        database.query(getPassword, function (error, results, fields) {
-            if (error) {
-                console.log("An error has occurred");
-                payload.log = "false";
-                socket.emit('loginResult', payload);
-            }
-            if (results.length) {
-                console.log(getPassword);
-                if (results[0].passwd == payload.passwd) {
-                    payload.log = "true";
-                    socket.emit('loginResult', payload);
-                }
-                else {
-                    console.log("Invalid Credentials");
-                    payload.log = "false";
-                    socket.emit('loginResult', payload);
-                }
-            }
-            else {
-                console.log("Invalid Credentials");
-                payload.log = "false";
-                socket.emit('loginResult', payload);
             }
         })
     });
@@ -233,6 +205,7 @@ io.on('connection', function(socket){
 
     //Sign In check
     socket.on('signIn', function (email, password) {
+        email = email.toLowerCase();
         if (email != null && password != null) {
             console.log('Attemted sign in from: ' + email);
             database.query("SELECT * FROM users WHERE email = '" + email + "'", function (error, users, fields) {
@@ -261,7 +234,7 @@ io.on('connection', function(socket){
     });
 
     function generateToken(hashedPassword, email, userID) {
-        return crypto.createHash('sha512').update(hashedPassword + email + userID).digest('hex');
+        return crypto.createHash('sha512').update(hashedPassword + email.toLowerCase() + userID).digest('hex');
     }
     function hashPassword(inPassword) {
         return crypto.createHash('sha512').update(inPassword).digest('hex');
