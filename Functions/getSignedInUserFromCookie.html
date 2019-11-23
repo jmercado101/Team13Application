@@ -1,40 +1,40 @@
 <script>
-        function getUserID() {
-            var authCookie = getCookie("auth");
+    function getAuth() {
+        var authCookie = getCookie("auth");
 
-            //console.log(authCookie);
+        //console.log(authCookie);
 
-            if (authCookie != "") {
-                var cookie = {};
-                var pairs = authCookie.split('&');
-                for (var i = 0; i < pairs.length; i++) {
-                    var pair = pairs[i].split('=');
-                    cookie[pair[0]] = pair[1];
-                }
-                //console.log(cookie['token']);
-                //console.log(cookie['ID']);
-                return cookie['ID'];
+        if (authCookie != "") {
+            var cookie = {};
+            var pairs = authCookie.split('&');
+            for (var i = 0; i < pairs.length; i++) {
+                var pair = pairs[i].split('=');
+                cookie[pair[0]] = pair[1];
             }
-            else {
-                alert("You must be logged in to leave a review.");
-                document.location.href = "bookDetails.html?ISBN=" + request["ISBN"];
-                return null;
-            }
-
-            function getCookie(cname) {
-                var name = cname + "=";
-                var decodedCookie = decodeURIComponent(document.cookie);
-                var ca = decodedCookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') {
-                        c = c.substring(1);
-                    }
-                    if (c.indexOf(name) == 0) {
-                        return c.substring(name.length, c.length);
-                    }
-                }
-                return "";
-            }
+            console.log(cookie['token']);
+            console.log(cookie['ID']);
+            return cookie;
         }
+        else {
+            alert("You must be logged in to leave a review.");
+            document.location.href = "bookDetails.html?ISBN=" + request["ISBN"];
+            return null;
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+    }
 </script>
