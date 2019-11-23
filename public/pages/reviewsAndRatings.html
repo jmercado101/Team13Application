@@ -133,12 +133,12 @@
 
     <script src="https://kit.fontawesome.com/480ae34729.js" crossorigin="anonymous"></script>
     <script>
-        /*
+        
         $(document).ready(function () {
-            getUserID();
+            //getAuth();
         });
-        */
-        function getUserID() {
+        
+        function getAuth() {
             var authCookie = getCookie("auth");
 
             //console.log(authCookie);
@@ -150,9 +150,9 @@
                     var pair = pairs[i].split('=');
                     cookie[pair[0]] = pair[1];
                 }
-                //console.log(cookie['token']);
-                //console.log(cookie['ID']);
-                return cookie['ID'];
+                console.log(cookie['token']);
+                console.log(cookie['ID']);
+                return cookie;
             }
             else {
                 alert("You must be logged in to leave a review.");
@@ -242,10 +242,6 @@
         }
 
         var socket = io();//open socket
-        
-        $(document).ready(function () {
-            socket.emit('testFunction', request['id']);
-        });
 
         function submitRating() {
             /*
@@ -255,10 +251,10 @@
             socket.emit('testFunction', checkRating())
             socket.emit('testFunction', document.getElementById('comments').value)
             */
-            
+            var cookie = getAuth();
             var payload = {
                 ISBN: request["ISBN"],
-                user_id: getUserID(),
+                user_id: cookie['ID'],
                 anonymity: checkAnonymity(),
                 rate: checkRating(),
                 comment: document.getElementById('comments').value
@@ -267,7 +263,7 @@
                 alert('All fields are mandatory');
             }
             else {
-                socket.emit('addRatings', payload);
+                socket.emit('addRatings', cookie['token'], payload);
                 document.location.href = "bookDetails.html?ISBN=" + request["ISBN"];
             }
                 

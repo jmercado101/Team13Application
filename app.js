@@ -191,18 +191,24 @@ io.on('connection', function(socket){
     });
 	
     //socket on add ratings NEW
-    socket.on('addRatings', function (payload) {
-        var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comment + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
-        database.query(query, function (error, results, fields) {
-            if (error) {
-                console.error('Bad query on RATING: ' + error);
-                console.log("Comment on " + payload.ISBN + " failed.");
-            }
-            else {
-                console.log("Added Comment to: " + payload.ISBN);
-            }
-            console.log(results);
-        });
+    socket.on('addRatings', function (token, payload) {
+        var userID = payload.user_id;
+        if (checkToken(token, userID)) {
+            var query = "INSERT INTO ratings VALUES('" + payload.ISBN + "','" + payload.user_id + "','" + payload.comment + "', '" + payload.rate + "', '" + payload.anonymity + "')"; //build query, all fields are necessary in add page
+            database.query(query, function (error, results, fields) {
+                if (error) {
+                    console.error('Bad query on RATING: ' + error);
+                    console.log("Comment on " + payload.ISBN + " failed.");
+                }
+                else {
+                    console.log("Added Comment to: " + payload.ISBN);
+                }
+                console.log(results);
+            });
+        }
+        else {
+            console.error("Invalid token from 'user': " + userID);
+        }
     });
     //End NEW
 
@@ -262,19 +268,17 @@ io.on('connection', function(socket){
     }
     function checkToken(providedToken, userID)
     {
-        if (providedToken != null && userID != null)
-        {
-            database.query("SELECT * FROM users WHERE ID = '" + userID + "'", function (error, user, fields)
-            {
-                if (error)
-                {
+        if (providedToken != null && userID != null) {
+            return database.query("SELECT * FROM users WHERE ID = '" + userID + "'", function (error, user, fields) {
+                if (error) {
                     console.error(error);
+                    return false;
                 }
-                else
-                {
-                    var knownToken = generateToken(user[0].passwd, user[0].email, user[0].ID);
-                    if (providedToken == knownToken) {
+                else {
+                    var knownGoodToken = generateToken(user[0].passwd, user[0].email, user[0].ID);
+                    if (providedToken == knownGoodToken) {
                         console.log("User " + userID + " authenticated.");
+                        return true;
                     }
                 }
             });
