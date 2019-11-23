@@ -56,7 +56,7 @@ io.on('connection', function(socket){
                 }
                 else {
                     console.log(results);
-                    socket.emit('cartDetails', results[0]);
+                    socket.emit('cartDetails', results);
                 }
             });
         }
