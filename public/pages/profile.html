@@ -19,7 +19,7 @@
     </style>
 </head>
 
-<body>
+<body onload="loadMyData()">
     <div class="container">
         <div class="col-sm-6 col-sm-offset-3">
             <h2>Your Profile</h2>
@@ -29,12 +29,19 @@
             <div class="info">
                 <label>Nickname</label>
             </div>
-            <div class="info">
+            <div class="info" id="info">
                 <label>Email</label>
             </div>
+            <div id="myEmail"></div>
             <button class="btn btn-succcess btn-lg" onclick="window.location.href = '/';">
                 Shop!
             </button>
+            <script>
+                var myEmail = document.getElementById("myEmail");
+                function loadMyData() {
+                    myEmail.innerHTML = sessionStorage.email;
+                }
+            </script>
             <p><a href="credit.html">Add Credit Card</a></p>
             <p><a href="/">Logout</a></p>
         </div>
