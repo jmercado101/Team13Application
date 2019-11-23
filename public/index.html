@@ -119,7 +119,7 @@
 				<div>
 					<h4>${book.title}</h4>
 					<h5>$${book.price}</h5>
-					<span class="remove-item" data-id=${book.ISBN} onclick="remove(${book.ISBN})">remove</span>
+					<span class="remove-item" data-id=${book.ISBN} onclick="remove(${book.ISBN}, ${book.price}, ${book.quantity})">remove</span>
 				</div>
 				<div>
 					<i class="fas fa-chevron-up" data-id=${book.ISBN} onclick="incrementCart(${book.ISBN}, ${book.price})"></i>
@@ -177,8 +177,11 @@
 			document.getElementById("cart-content").remove();
 		}
 
-		function remove(){
-
+		function remove(ISBN, price, quantity){
+			document.getElementById("cart-content").removeChild(document.getElementById(ISBN));
+			minusPrice = price * quantity;
+			document.getElementById("cart-total").innerText -= minusPrice;
+			document.getElementById("cart-items").innerText -= quantity;
 		}
 		</script>
 	
