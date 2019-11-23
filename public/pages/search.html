@@ -218,6 +218,21 @@
 		</div>
 
 	<script>
+
+
+        var request = {};
+        var pairs = location.search.substring(1).split('&');
+        for (var i = 0; i < pairs.length; i++) {
+            var pair = pairs[i].split('=');
+            request[pair[0]] = pair[1];
+        }
+
+        var search = request["authorID"];
+        if(search != null){
+            var search_key = search;
+            socket.emit("author search", search_key);
+        }
+
 		var socket = io();
 		var current_table_data =  [];
 		function search_database(){
@@ -245,6 +260,19 @@
                 document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
         }
 
+        $(document).ready(function () {
+            //request author table
+            socket.emit('bookRating', request["ISBN"]);
+            console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on("ratingResult", function (rating) {
+                bookRating = rating;
+                //console.log(data);
+                showStars(bookRating);
+            });
+        });
+
         function showStars(numStars) {
             document.getElementById("starField").innerHTML = genStars(numStars) + ' ' + numStars;
         };
@@ -270,6 +298,18 @@
             
         }
 
+        $(document).ready(function () {
+            //request author table
+            socket.emit('purchased', request["ISBN"], 2);
+            console.log('Checking is user bought the book...');
+            ///Event Listeners
+            //logs current users
+            socket.on("wasPurchased", function (bought) {
+                wasBought = bought;
+                //console.log(data);
+                boughtBook(wasBought);
+            });
+        });
 
         function boughtBook(value) {            
             if (value >= 1) {
@@ -282,6 +322,17 @@
             }
             
         }
+
+        $(document).ready(function () {
+            //request author table
+            socket.emit('comments', request["ISBN"]);
+            console.log('Getting comments on book...');
+            ///Event Listeners
+            socket.on("gotComments", function (comments) {
+                //console.log(data);
+                displayComments(comments);
+            });
+        });
 
         function displayComments(commentArray) {
             var userName = "UsernameHere";
@@ -296,6 +347,8 @@
 
             document.getElementById("commentSection").innerHTML = comments;
         }
+
+
 
 
 		function show_table(table){
