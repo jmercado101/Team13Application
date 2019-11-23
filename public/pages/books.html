@@ -77,7 +77,7 @@
 		var socket = io();//auto-discovery
 		$(document).ready(function(){ 
 			//request author table
-			socket.emit('table request', 'book');
+			socket.emit('table request', 'books');
 			console.log('Sent request to server');
 			///Event Listeners
 			//logs current users
