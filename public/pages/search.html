@@ -1,48 +1,41 @@
 <head>
     <title>Books Database</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+
     <script src="/socket.io/socket.io.js"></script>
 	<script src="./../jquery-3.3.1.min.js"></script>
 
 	<style type=text/css>
-
         .header {
             width: 100%;
             height: 10%;
             background-color: green;
         }
-
         .mainBody {
             width: 100%;
             height: 90%;
         }
-
         .NavigationBox {
             background-color: blue;
             width: 15%;
             height: 100%;
             float: left;
         }
-
         .productBox {
             margin-left: 15%;
             width: 85%;
             height: 100%;
             background-color: red;
         }
-
         .productTree {
             padding-top: 0.50%;
             padding-left: 20px;
             height: 3%;
             background-color: orange;
         }
-
         .product-left {
             float: left;
             width: 30%;
         }
-
         .bookCover {
             padding-top: 50px;
             margin-left: 50px;
@@ -52,58 +45,46 @@
             -ms-transition: all 2s ease;
             transition: all 2s ease;
         }
-
         .bookCover:hover {
             width: 80%;
         }
-
         .bookDetails {
             width: 60%;
             margin-left: 50px;
             background-color: orange;
         }
-
         .product-right {
             margin-left: 30%;
             width: 45%;
         }
-
         .bookTitle {
             margin-top: 50px;
             background-color: green;
         }
-
         .cartOptions {
             background-color: orange;
         }
-
         .bookDescription {
             background-color: blue;
         }
-
         .aboutAuthor {
             background-color: green;
         }
-
         .userRating {
             background-color: yellow;
         }
-
         .userComments {
             background-color: orange;
         }
-
         h1, h2, h3, h4 {
             display: inline;
         }
-
         starChecked {
             color: #ffc700;
         }
         starUnChecked {
             color: #ccc;
         }
-
         button {
             font-size: 20px;
             border-radius: 12px;
@@ -133,7 +114,6 @@
             padding-bottom: 13px;
             /*background-color: blue; */
         }
-
 		</style>
 </head>
 
@@ -218,21 +198,32 @@
 		</div>
 
 	<script>
-		var socket = io();
-		var current_table_data =  [];
-		function search_database(){
-			var search_key = document.getElementById('1').value;
-			socket.emit("search database", search_key);
-		}
-		socket.on("results" ,function(data){
-				current_table_data = data;
-				//console.log(data);
-				show_table(current_table_data);
-			});
-		 
-
+        var request = {};
+        var pairs = location.search.substring(1).split('&');
+        for (var i = 0; i < pairs.length; i++) {
+            var pair = pairs[i].split('=');
+            request[pair[0]] = pair[1];
+        }
+        var socket = io();
+        $(document).ready(function () {
+            
+            var search_key = request["authorID"];
+            if (search_key != null) {
+                console.log("AuthorSearch.")
+                socket.emit("author search", search_key);
+            }
+		    var current_table_data =  [];
+            socket.on("table result" ,function(data) {
+				    current_table_data = data;
+				    console.log(data);
+				    show_table(current_table_data);
+            });
+        });
+        function search_database() {
+            var search_key = document.getElementById('1').value;
+            socket.emit("search database", search_key);
+        }
 		 function display(bookData) {
-
             //document.getElementById("GETTEST").innerHTML = request["ISBN"];
 				document.getElementById("ISBN").innerHTML = bookData.ISBN;
                 document.getElementById("title").innerHTML = bookData.title;
@@ -244,11 +235,21 @@
                 document.getElementById("descript").innerHTML = bookData.descript;
                 document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
         }
-
+        $(document).ready(function () {
+            //request author table
+            socket.emit('bookRating', request["ISBN"]);
+            console.log('Sent request to server');
+            ///Event Listeners
+            //logs current users
+            socket.on("ratingResult", function (rating) {
+                bookRating = rating;
+                //console.log(data);
+                showStars(bookRating);
+            });
+        });
         function showStars(numStars) {
             document.getElementById("starField").innerHTML = genStars(numStars) + ' ' + numStars;
         };
-
         function genStars(numStars) {
             var starsString = "";
             var end = false;
@@ -269,8 +270,18 @@
             }
             
         }
-
-
+        $(document).ready(function () {
+            //request author table
+            socket.emit('purchased', request["ISBN"], 2);
+            console.log('Checking is user bought the book...');
+            ///Event Listeners
+            //logs current users
+            socket.on("wasPurchased", function (bought) {
+                wasBought = bought;
+                //console.log(data);
+                boughtBook(wasBought);
+            });
+        });
         function boughtBook(value) {            
             if (value >= 1) {
                 document.getElementById("rate_button").disabled = false;
@@ -282,7 +293,16 @@
             }
             
         }
-
+        /*$(document).ready(function () {
+            //request author table
+            socket.emit('comments', request["ISBN"]);
+            console.log('Getting comments on book...');
+            ///Event Listeners
+            socket.on("gotComments", function (comments) {
+                //console.log(data);
+                displayComments(comments);
+            });
+        });
         function displayComments(commentArray) {
             var userName = "UsernameHere";
             var comments = "";
@@ -293,11 +313,8 @@
                 comments = comments.concat("<div class='comment'>" + commentArray[i].comments + "</div>");
                 comments = comments.concat("<hr>");
             }
-
             document.getElementById("commentSection").innerHTML = comments;
-        }
-
-
+        }*/
 		function show_table(table){
 			//var table_head_html = '<tr><th>Title</th><th>On Hand</th><th>Branch Name</th><th>Author First Name</th> <th>Author Last Name Name</th>  <th>Sequence</th>  <th>Publisher Name</th> </tr>';
 			//var table_body_html = '';
