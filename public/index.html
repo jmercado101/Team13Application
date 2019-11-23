@@ -150,9 +150,9 @@
 		function incrementCart(ISBN, price){
 			console.log("working");
 			document.getElementById(ISBN).innerText ++;
-			tempTotal += price
+			tempTotal += price;
 			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
-			socket.on('incrementQuantity', (1, 1234567890123));
+			//socket.on('incrementQuantity', (1, 1234567890123));
 			//var current_table_data = [];
 			//var socket = io();//open socket
 			//$(document).ready(function () {
@@ -167,7 +167,7 @@
 		function decrementCart(ISBN, price){
 			console.log("working");
 			document.getElementById(ISBN).innerText --;
-			tempTotal -= price
+			tempTotal -= price;
 			document.getElementById("cart-total").innerText = parseFloat(tempTotal.toFixed(2));
 		}
 		
