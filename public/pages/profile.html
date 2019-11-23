@@ -22,17 +22,20 @@
 <body onload="loadMyData()">
     <div class="container">
         <div class="col-sm-6 col-sm-offset-3">
-            <h2>Your Profile</h2>
-            <div class="info">
-                <label>Full Name</label>
-            </div>
+            <h2>Welcome!</h2>
+            <div id="myfName"></div>
+            <div id="mylName"></div>
+            <div><p>  </p></div>
             <div class="info">
                 <label>Nickname</label>
             </div>
+            <div id= "myNickname"></div>
+            <div><p>  </p></div>
             <div class="info" id="info">
                 <label>Email</label>
             </div>
             <div id="myEmail"></div>
+            <div><p>  </p></div>
             <button class="btn btn-succcess btn-lg" onclick="window.location.href = '/';">
                 Shop!
             </button>
@@ -40,6 +43,9 @@
                 var myEmail = document.getElementById("myEmail");
                 function loadMyData() {
                     myEmail.innerHTML = sessionStorage.email;
+                    myNickname.innerHTML = sessionStorage.nickname;
+                    myfName.innerHTML = sessionStorage.fName;
+                    mylName.innerHTML = sessionStorage.lName;
                 }
             </script>
             <p><a href="credit.html">Add Credit Card</a></p>
