@@ -89,12 +89,12 @@
 		});
 		//FUNCTIONS
 		function show_table(table){
-			var table_head_html = '<tr><th>bookCode</th><th>title</th><th>publisherCode</th><th>type</th><th>paperback</th></tr>';
+            var table_head_html = '<tr><th>ISBN</th><th>title</th><th>Publisher</th><th>genere</th><th>price</th></tr>';
 			var table_body_html = '';
 			
 			for(var i = 0; i < table.length; i++)
 			{
-				table_body_html = table_body_html.concat("<tr>" + "<td>"+table[i].bookCode+"</td>"+"<td>"+table[i].title+"</td>"+"<td>"+table[i].publisherCode+"</td>"+"<td>"+table[i].type+"</td>"+"<td>"+table[i].paperback+"</td>"+"</tr>");
+                table_body_html = table_body_html.concat("<tr>" + "<td>" + table[i].ISBN + "</td>" + "<td>" + table[i].title + "</td>" + "<td>" + table[i].publisher + "</td>" + "<td>" + table[i].genere + "</td>" + "<td>$" + table[i].price.toFixed(2)+"</td>"+"</tr>");
 			}
 			console.log(table_body_html);
 			$('#sql_table').html(table_head_html+table_body_html);
