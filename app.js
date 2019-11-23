@@ -220,13 +220,23 @@ io.on('connection', function(socket){
     });
     //End NEW
 
+	//author search
+	socket.on('author search', function(author_ID){
+		database.query("SELECT title, genere, coverURL, price, descript, stars FROM book as b, ratings as r, author as a WHERE b.author_ID = '"+author_ID+"' AND a.author = b.author_ID and b.ISBN = r.ISBN ", function (error, results, fields){
+			if(error) throw error;
+			console.log(results);
+			socket.emit('table result', results);
+		});
+	});
+
     //On Search
     socket.on('search database', function(search_key){
 		database.query("SELECT title, fName, lName ,publisher, genere, coverURL, price, descript, comments, stars FROM books as b, ratings as r, author as a WHERE (b.title = '" + search_key +"' OR a.fName = '"+search_key+"' OR a.lName = '"+search_key+"' OR b.genere = '"+search_key+"') AND b.author_ID = a.author and b.ISBN = r.ISBN", function (error, results, fields) {
 		if (error) throw error;
 		console.log(results);
-            socket.emit('table result', results);
+        socket.emit('table result', results);
         });
+		
     });
 
     //On table request
