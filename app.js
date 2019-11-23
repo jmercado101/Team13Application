@@ -49,8 +49,8 @@ io.on('connection', function(socket){
 	
 	//Query to get details from cart
 	socket.on('getCart', function (userID) {
-        if (userID != null) {		
-	        database.query("Select c.userID, c.ISBN, c.quantity, b.coverURL, b.price, b.title From cart as c join books as b on c.ISBN = b.ISBN Where userID = " + userID + ";", function (error, results, fields) {
+        if (userID != null) {	
+		database.query("Select c.userID, c.ISBN, c.quantity, b.coverURL, b.price, b.title From cart as c join books as b on c.ISBN = b.ISBN Where userID = " + userID + ";", function (error, results, fields) {
                 if (error) {
                     console.error(error);
                 }
