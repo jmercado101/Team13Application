@@ -281,7 +281,7 @@ io.on('connection', function(socket){
 	});
     });
 
-    //Sign In check
+    //Login check
     socket.on('signIn', function (email, password) {
         email = email.toLowerCase();
         if (email != null && password != null) {
@@ -296,6 +296,7 @@ io.on('connection', function(socket){
                 {
                     if (hashPassword(password) == users[0].passwd) {
                         console.log("Success!")
+                        socket.emit('allInfo', users[0].nickname, users[0].fName, users[0].lName);
                         socket.emit('authenticated', generateToken(users[0].passwd, users[0].email, users[0].ID), users[0].ID);
                     }
                     else {
