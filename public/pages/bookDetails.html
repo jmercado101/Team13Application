@@ -126,7 +126,7 @@
             button {
                 font-size: 20px;
                 border-radius: 12px;
-                //background-color: #7bb743;
+                background-color: #7bb743;
                 color: white;
             }
             username {
@@ -243,31 +243,20 @@
                 if (cookie != null) {
                     socket.emit('purchased', request["ISBN"], cookie['ID']);
                     console.log('Checking is user bought the book...');
-                    socket.on("wasPurchased", function (bought) {
-                        wasBought = bought;
-                        boughtBook(wasBought);
+                    socket.on("wasPurchased", function (value) {
+                        if (value >= 1) {
+                            document.getElementById("rate_button").disabled = false;
+                            document.getElementById('rate_button').style.backgroundColor = '#7bb743';
+                            document.getElementById('rate_button').style.color = 'white';
+                        }
+                        else {
+                            document.getElementById("rate_button").disabled = true;
+                            document.getElementById("rate_button").style.backgroundColor = '#889977';
+                            document.getElementById("rate_button").style.color = '#a7bd91';
+                        }
                     });
-                }
-                else {
-                    document.getElementById("rate_button").disabled = true;
-                    document.getElementById("rate_button").style.backgroundColor = '#889977';
-                    document.getElementById("rate_button").style.color = '#a7bd91';
-                }
-            
+                }            
             });
-
-            function boughtBook(value) {
-                var cookie = getAuth();
-                if (value >= 1 && cookie != null) {
-                    document.getElementById("rate_button").disabled = false;
-                }
-                else {
-                    document.getElementById("rate_button").disabled = true;
-                    document.getElementById("rate_button").style.backgroundColor = '#889977';
-                    document.getElementById("rate_button").style.color ='#a7bd91';
-                }
-            
-            }
 
             $(document).ready(function () {
                 socket.emit('comments', request["ISBN"]);
