@@ -256,7 +256,8 @@
             
             });
 
-            function boughtBook(value) {            
+            function boughtBook(value) {
+                var cookie = getAuth();
                 if (value >= 1 && cookie != null) {
                     document.getElementById("rate_button").disabled = false;
                 }
