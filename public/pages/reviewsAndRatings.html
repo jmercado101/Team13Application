@@ -1,7 +1,6 @@
 ﻿<html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="./../jquery-3.3.1.min.js"></script>
 
@@ -244,6 +243,18 @@
         }
 
         var socket = io();//open socket
+        var cookie = getAuth();
+        $(document).ready(function () {
+            socket.emit("checkRating", cookie['ID'], request['ISBN']);
+            socket.on("reviewExists", function (exists) {
+                
+                if (exists) {
+                    document.getElementById("submit_button").disabled = true;
+                    alert("You have already left a review.");
+                    document.location.href = "bookDetails.html?ISBN=" + request['ISBN'];
+                }
+            });
+        });
 
         function submitRating() {
             /*
@@ -253,7 +264,7 @@
             socket.emit('testFunction', checkRating())
             socket.emit('testFunction', document.getElementById('comments').value)
             */
-            var cookie = getAuth();
+            //var cookie = getAuth();
             var payload = {
                 ISBN: request["ISBN"],
                 user_id: cookie['ID'],

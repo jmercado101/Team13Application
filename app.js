@@ -251,6 +251,25 @@ io.on('connection', function(socket){
             console.error("Invalid token from 'user': " + userID);
         }
     });
+
+    socket.on('checkRating', function (userID, ISBN) {
+        if (userID != null || ISBN != null) {
+            var query = "SELECT * FROM ratings WHERE userID = '" + userID + "'";
+            database.query(query, function (error, rating, fields) {
+                if (error) {
+                    console.error('Bad query on RATINGCHECK: ' + error);
+                }
+                else {
+                    if (rating[0] != null) {
+                        console.log("Duplicate review restriction:");
+                        console.log("Comment on " + ISBN + " already exists.");
+                        socket.emit("reviewExists", true);
+                    }
+                }
+            });
+        }
+    });
+
     //End NEW
 
     //author search
