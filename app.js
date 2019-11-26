@@ -11,16 +11,16 @@ var path = require('path');
 app.use(express.static(__dirname + '/public'));
 //Server Set Up
 var port = 80
-http.listen(port,function(){
+http.listen(port, function () {
     console.log('Server is online');
 });
 
 //SOCKET.IO
-io.on('connection', function(socket){
-  //On  Connection
+io.on('connection', function (socket) {
+    //On  Connection
     console.log('A user has connected');
 
-  //On Disconnection
+    //On Disconnection
     socket.on('disconnect', function () {
     });
 
@@ -44,13 +44,13 @@ io.on('connection', function(socket){
         else {
             console.error("ERROR: bookDetails: ISBN == null");
         }
-        
+
     });
-	
-	//Query to get details from cart
-	socket.on('getCart', function (userID) {
-        if (userID != null) {	
-		database.query("Select c.userID, c.ISBN, c.quantity, b.coverURL, b.price, b.title From cart as c join books as b on c.ISBN = b.ISBN Where userID = " + userID + ";", function (error, results, fields) {
+
+    //Query to get details from cart
+    socket.on('getCart', function (userID) {
+        if (userID != null) {
+            database.query("Select c.userID, c.ISBN, c.quantity, b.coverURL, b.price, b.title From cart as c join books as b on c.ISBN = b.ISBN Where userID = " + userID + ";", function (error, results, fields) {
                 if (error) {
                     console.error(error);
                 }
@@ -63,76 +63,76 @@ io.on('connection', function(socket){
         else {
             console.error("ERROR: getCart: userID == null");
         }
-	});
-	
+    });
+
     //query to add to cart in databse
-	socket.on('addToCart', function (bookData){
-		if(bookData != null){
-			var query = "INSERT INTO cart VALUES ('" + bookData.userID + "','" + bookData.ISBN + "','1')";
-			database.query(query, function (error, results, fields){
-				if (error){
-					console.error(error);
-				}
-				else{
-					console.log("done");
-				}
-			});
-		}
-		else{
-			console.error("ERROR: bookData == null");
-		}
-		
-	});
+    socket.on('addToCart', function (bookData) {
+        if (bookData != null) {
+            var query = "INSERT INTO cart VALUES ('" + bookData.userID + "','" + bookData.ISBN + "','1')";
+            database.query(query, function (error, results, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    console.log("done");
+                }
+            });
+        }
+        else {
+            console.error("ERROR: bookData == null");
+        }
 
-	//add item quantity in cart
-	socket.on('incrementQuantity', function(userID, ISBN){
-		if(userID != null && ISBN != null ){
-			database.query("UPDATE cart SET quantity = cart.quantity + 1 WHERE userID = '" + userID + "' AND ISBN = '"+ ISBN + "';");
-			if (error){
-				console.error(error);
-			}
-			else{
-				console.log("done");
-			}
-		}
-		else{
-			console.log("Error: userID or ISBN == null");
-		}
-	});
+    });
 
-	//subtract item quantity in cart
-	socket.on('decrementQuantity', function(userID, ISBN){
-		if(userID != null && ISBN != null ){
-			database.query("UPDATE cart SET quantity = cart.quantity - 1 WHERE userID = '" + userID + "' AND ISBN = '"+ ISBN + "';");
-			if (error){
-				console.error(error);
-			}
-			else{
-				console.log("done");
-			}
-		}
-		else{
-			console.log("Error: userID or ISBN == null");
-		}
-	});
+    //add item quantity in cart
+    socket.on('incrementQuantity', function (userID, ISBN) {
+        if (userID != null && ISBN != null) {
+            database.query("UPDATE cart SET quantity = cart.quantity + 1 WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';");
+            if (error) {
+                console.error(error);
+            }
+            else {
+                console.log("done");
+            }
+        }
+        else {
+            console.log("Error: userID or ISBN == null");
+        }
+    });
 
-	//clears cart for given userID
-	socket.on('clearCart', function(userID){
-		if(userID !=null){
-			database.query("DELETE FROM cart WHERE userID = '" + userID + "'", function(error, rating, fields){
-				if(error){
-					console.error(error);
-				}
-				else{
-					console.log("done");
-				}
-			})
-		}
-		else{
-			console.log("Error: userID == null");
-		}
-		
-	});
+    //subtract item quantity in cart
+    socket.on('decrementQuantity', function (userID, ISBN) {
+        if (userID != null && ISBN != null) {
+            database.query("UPDATE cart SET quantity = cart.quantity - 1 WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';");
+            if (error) {
+                console.error(error);
+            }
+            else {
+                console.log("done");
+            }
+        }
+        else {
+            console.log("Error: userID or ISBN == null");
+        }
+    });
+
+    //clears cart for given userID
+    socket.on('clearCart', function (userID) {
+        if (userID != null) {
+            database.query("DELETE FROM cart WHERE userID = '" + userID + "'", function (error, rating, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    console.log("done");
+                }
+            })
+        }
+        else {
+            console.log("Error: userID == null");
+        }
+
+    });
 
     socket.on('bookRating', function (ISBN) {
         if (ISBN != null) {
@@ -203,9 +203,10 @@ io.on('connection', function(socket){
     });
 
     // END NEW CODE
-		
-     socket.on('addUser', function (payload) {
-         var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email.toLowerCase() + "'OR users.nickname = '" + payload.nickname + "')";
+
+    //Add User to DB
+    socket.on('addUser', function (payload) {
+        var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email.toLowerCase() + "'OR users.nickname = '" + payload.nickname + "')";
         database.query(checkDuplicate, function (error, results, fields) {
             if (error) {
                 console.log("An error has occurred");
@@ -230,7 +231,35 @@ io.on('connection', function(socket){
             }
         })
     });
-	
+
+    socket.on('addCredit', function (payload) {
+        var checkDuplicate = "SELECT * FROM credit_card WHERE (credit_card.cardNum = '" + payload.cardNum  + "'AND credit_card.userID = '" + payload.ID + "')";
+        database.query(checkDuplicate, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('creditResult', payload);
+            }
+            if (results.length) {
+                console.log("Credit Card is already listed");
+                payload.log = "false";
+                socket.emit('creditResult', payload);
+            }
+            else {
+                console.log("The credit card will be registered");
+                var query = "INSERT INTO credit_card (userID, cardNum, nameOnCard, cvv, exp_date, zipCode) VALUES('" + payload.ID + "','" + payload.cardNum + "','" + payload.nameOnCard + "','" + payload.cvv + "','" + payload.exp_date + "','" + payload.zipCode + "')";//build query, all fields are necessary in add page		
+                database.query(query, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                    socket.emit('table result', results);
+                });
+                payload.log = "true";
+                socket.emit('creditResult', payload);
+            }
+        })
+    });
+
+
     //socket on add ratings NEW
     socket.on('addRatings', function (token, payload) {
         var userID = payload.user_id;
@@ -273,31 +302,31 @@ io.on('connection', function(socket){
     //End NEW
 
     //author search
-	socket.on('author search', function(author_ID){
-		database.query("SELECT title, genere, coverURL, price, descript, stars FROM books as b, ratings as r, author as a WHERE b.author_ID = '"+author_ID+"' AND a.author = b.author_ID and b.ISBN = r.ISBN ", function (error, results, fields){
-			if(error) throw error;
-			console.log(results);
-			socket.emit('table result', results);
-		});
-	});
+    socket.on('author search', function (author_ID) {
+        database.query("SELECT title, genere, coverURL, price, descript, stars FROM books as b, ratings as r, author as a WHERE b.author_ID = '" + author_ID + "' AND a.author = b.author_ID and b.ISBN = r.ISBN ", function (error, results, fields) {
+            if (error) throw error;
+            console.log(results);
+            socket.emit('table result', results);
+        });
+    });
 
     //On Search
-    socket.on('search database', function(search_key){
-		database.query("SELECT title, fName, lName ,publisher, genere, coverURL, price, descript, comments, stars FROM books as b, ratings as r, author as a WHERE (b.title = '" + search_key +"' OR a.fName = '"+search_key+"' OR a.lName = '"+search_key+"' OR b.genere = '"+search_key+"') AND b.author_ID = a.author and b.ISBN = r.ISBN", function (error, results, fields) {
-		if (error) throw error;
-		console.log(results);
+    socket.on('search database', function (search_key) {
+        database.query("SELECT title, fName, lName ,publisher, genere, coverURL, price, descript, comments, stars FROM books as b, ratings as r, author as a WHERE (b.title = '" + search_key + "' OR a.fName = '" + search_key + "' OR a.lName = '" + search_key + "' OR b.genere = '" + search_key + "') AND b.author_ID = a.author and b.ISBN = r.ISBN", function (error, results, fields) {
+            if (error) throw error;
+            console.log(results);
             socket.emit('table result', results);
         });
     });
 
     //On table request
-    socket.on('table request', function(table){
-	console.log('Received request for ' + table);
-	 database.query('SELECT * FROM ' + table, function (error, results, fields) {
-		if (error) throw error;
-		console.log(results);
-		socket.emit('table result', results);
-	});
+    socket.on('table request', function (table) {
+        console.log('Received request for ' + table);
+        database.query('SELECT * FROM ' + table, function (error, results, fields) {
+            if (error) throw error;
+            console.log(results);
+            socket.emit('table result', results);
+        });
     });
 
     //Login check
@@ -307,16 +336,14 @@ io.on('connection', function(socket){
             console.log('Attemted sign in from: ' + email);
             console.log(password)
             database.query("SELECT * FROM users WHERE email = '" + email + "'", function (error, users, fields) {
-                if(error || users[0] == null)
-                {
+                if (error || users[0] == null) {
                     console.error(error);
                     socket.emit('authenticated', "invalidLogin", null);
                 }
-                else
-                {
+                else {
                     if (hashPassword(password) == users[0].passwd) {
                         console.log("Success!")
-                        socket.emit('allInfo', users[0].nickname, users[0].fName, users[0].lName);
+                        socket.emit('allInfo', users[0].nickname, users[0].fName, users[0].lName, users[0].ID);
                         socket.emit('authenticated', generateToken(users[0].passwd, users[0].email, users[0].ID), users[0].ID);
                     }
                     else {
@@ -328,7 +355,7 @@ io.on('connection', function(socket){
                         socket.emit('authenticated', "invalidLogin", null);
                     }
                 }
-                
+
             });
         }
     });
@@ -339,8 +366,7 @@ io.on('connection', function(socket){
     function hashPassword(inPassword) {
         return crypto.createHash('sha512').update(inPassword).digest('hex');
     }
-    function checkToken(providedToken, userID)
-    {
+    function checkToken(providedToken, userID) {
         if (providedToken != null && userID != null) {
             return database.query("SELECT * FROM users WHERE ID = '" + userID + "'", function (error, user, fields) {
                 if (error) {
@@ -357,7 +383,7 @@ io.on('connection', function(socket){
             });
         }
     }
- 
+
 
 });
 //database connection
