@@ -310,6 +310,7 @@ io.on('connection', function(socket){
                 if(error || users[0] == null)
                 {
                     console.error(error);
+                    socket.emit('authenticated', "invalidLogin", null);
                 }
                 else
                 {
