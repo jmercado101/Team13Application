@@ -192,11 +192,11 @@
                 document.getElementById("coverURL").src = bookData.coverURL;
                 document.getElementById("price").innerHTML = bookData.price.toFixed(2);
                 document.getElementById("author_ID").innerHTML = bookData.authorName;
-                document.getElementById("authorURL").setAttribute("href", searchPage + "?search=" + bookData.author_ID)
+                document.getElementById("authorURL").setAttribute("href", searchPage + "?authorID=" + bookData.author_ID)
                 document.getElementById("publisher").innerHTML = bookData.publisher;
                 document.getElementById("descript").innerHTML = bookData.descript;
                 document.getElementById("rate_button").setAttribute("onclick", "window.location.href = 'reviewsAndRatings.html?ISBN=" + bookData.ISBN + "';");
-
+                document.getElementById("addToCart").setAttribute("onclick", "addToCart();");
             }
 
             $(document).ready(function () {
@@ -316,6 +316,17 @@
                     return "";
                 }
             }
+
+            function addToCart() {
+                var cookie = getAuth();
+                console.log("Adding book to cart?");
+                var book = {
+                    ISBN: request['ISBN'],
+                    userID: cookie['ID']
+                }
+                socket.emit('addToCart', book, cookie['token']);
+            }
+
         
         </script>
 
@@ -369,7 +380,7 @@
 					</div>
                     <div class="cartOptions">
                         <h2>Price: $<span id="price"></span></h2>
-                        Cart Button goes here.
+                        <button id="addToCart" value="addToCart" onClick="">Add to cart</button>
                     </div>
 
 					<div class="bookDescription">
@@ -384,7 +395,6 @@
                         <h2>User Rating:</h2>
                         <h2><span id="starField"></span> </h2>
                         <button id="rate_button" value="rate_review" onClick="">Rate and Review</button>
-                        
                     </div>
 
                     <div class="userComments">

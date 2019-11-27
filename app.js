@@ -66,15 +66,28 @@ io.on('connection', function (socket) {
     });
 
     //query to add to cart in databse
-    socket.on('addToCart', function (bookData) {
-        if (bookData != null) {
-            var query = "INSERT INTO cart VALUES ('" + bookData.userID + "','" + bookData.ISBN + "','1')";
-            database.query(query, function (error, results, fields) {
+    socket.on('addToCart', function (bookData, token) {
+        if (bookData != null && checkToken(token, bookData.userID)) {
+            database.query("SELECT * FROM cart WHERE userID = " + bookData.userID + " AND ISBN = " + bookData.ISBN, function (error, quantity, fields) {
                 if (error) {
                     console.error(error);
                 }
                 else {
-                    console.log("done");
+                    if (quantity[0] != null) {
+                        console.log("Book already in cart.");
+                    }
+                    else {
+                        console.log("Adding book to cart.")
+                        var query = "INSERT INTO cart VALUES ('" + bookData.userID + "','" + bookData.ISBN + "','1')";
+                        database.query(query, function (error, results, fields) {
+                            if (error) {
+                                console.error(error);
+                            }
+                            else {
+                                console.log("done");
+                            }
+                        });
+                    }
                 }
             });
         }
@@ -85,15 +98,29 @@ io.on('connection', function (socket) {
     });
 
     //add item quantity in cart
-    socket.on('incrementQuantity', function (userID, ISBN) {
-        if (userID != null && ISBN != null) {
-            database.query("UPDATE cart SET quantity = cart.quantity + 1 WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';");
-            if (error) {
-                console.error(error);
-            }
-            else {
-                console.log("done");
-            }
+    socket.on('incrementQuantity', function (userID, ISBN, token) {
+        if (userID != null && ISBN != null && checkToken(token, userID)) {
+            database.query("SELECT * FROM cart WHERE userID = " + userID + " AND ISBN = " + ISBN, function (error, quantity, fields) {
+                if (error) {
+                    console.error(error);
+                }
+                else {
+                    if (quantity[0] != null) {
+                        console.log("Incrementing book in cart.")
+                        database.query("UPDATE cart SET quantity = cart.quantity + 1 WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';", function (error, quantity, fields) {
+                            if (error) {
+                                console.error(error);
+                            }
+                            else {
+                                console.log("done");
+                            }
+                        });
+                    }
+                    else {
+                        console.log("Book not in cart");
+                    }
+                }
+            });
         }
         else {
             console.log("Error: userID or ISBN == null");
@@ -101,24 +128,45 @@ io.on('connection', function (socket) {
     });
 
     //subtract item quantity in cart
-    socket.on('decrementQuantity', function (userID, ISBN) {
-        if (userID != null && ISBN != null) {
-            database.query("UPDATE cart SET quantity = cart.quantity - 1 WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';");
-            if (error) {
-                console.error(error);
-            }
-            else {
-                console.log("done");
-            }
+    socket.on('decrementQuantity', function (userID, ISBN, token) {
+        if (userID != null && ISBN != null && checkToken(token, userID)) {
+            database.query("SELECT quantity FROM cart WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';", function (error, quantity, fields) {
+                if (quantity[0] != null && quantity[0].quantity <= 1) {
+                    database.query("DELETE FROM cart WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';");
+                    console.log("Deleteing book: " + ISBN + " from cart: " + userID);
+                }
+                else {
+                    database.query("UPDATE cart SET quantity = cart.quantity - 1 WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';", function (error, quantity, fields) {
+                        if (error) {
+                            console.error(error);
+                        }
+                        else {
+                            console.log("done");
+                        }
+                    });
+                }
+            });
+            
         }
         else {
             console.log("Error: userID or ISBN == null");
         }
     });
 
+    //Remove book from cart
+    socket.on('removeBook', function (userID, ISBN, token) {
+        if (userID != null && ISBN != null && checkToken(token, userID)) {
+            database.query("DELETE FROM cart WHERE userID = '" + userID + "' AND ISBN = '" + ISBN + "';");
+            console.log("Deleteing book: " + ISBN + " from cart: " + userID);
+        }
+        else {
+            console.log("Error: userID or ISBN == null or token invalid.");
+        }
+    });
+
     //clears cart for given userID
-    socket.on('clearCart', function (userID) {
-        if (userID != null) {
+    socket.on('clearCart', function (userID, token) {
+        if (userID != null && checkToken(token, userID)) {
             database.query("DELETE FROM cart WHERE userID = '" + userID + "'", function (error, rating, fields) {
                 if (error) {
                     console.error(error);
