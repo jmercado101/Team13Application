@@ -140,7 +140,9 @@
 			//console.log("HELLO WORLD")
 			//console.log("works outside function");
 
-            socket.emit('getCart', cookie['ID']); //don't know where userID this is coming from, yet.            
+            if (cookie != null) {
+                socket.emit('getCart', cookie['ID']);
+            }
 			console.log('Sent request to server');
             ///Event Listeners
             //logs current users

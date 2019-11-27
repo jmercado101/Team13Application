@@ -327,12 +327,17 @@
             //Adds current book to cart for the authenticated user when clicked.
             function addToCart() {
                 var cookie = getAuth();
-                //console.log("Adding book to cart?");
-                var book = {
-                    ISBN: request['ISBN'],
-                    userID: cookie['ID']
+                if (cookie != null) {
+                    //console.log("Adding book to cart?");
+                    var book = {
+                        ISBN: request['ISBN'],
+                        userID: cookie['ID']
+                    }
+                    socket.emit('addToCart', book, cookie['token']);
                 }
-                socket.emit('addToCart', book, cookie['token']);
+                else {
+                    alert("You are not signed in.");
+                }
             }
 
         </script>
