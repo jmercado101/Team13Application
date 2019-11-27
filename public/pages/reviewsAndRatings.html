@@ -133,15 +133,8 @@
     <script src="https://kit.fontawesome.com/480ae34729.js" crossorigin="anonymous"></script>
     <script>
         
-        $(document).ready(function () {
-            //getAuth();
-        });
-        
         function getAuth() {
             var authCookie = getCookie("auth");
-
-            //console.log(authCookie);
-
             if (authCookie != "") {
                 var cookie = {};
                 var pairs = authCookie.split('&');
@@ -257,14 +250,6 @@
         });
 
         function submitRating() {
-            /*
-            socket.emit('testFunction', request["ISBN"])
-            socket.emit('testFunction', request["id"])
-            socket.emit('testFunction', checkAnonymity())
-            socket.emit('testFunction', checkRating())
-            socket.emit('testFunction', document.getElementById('comments').value)
-            */
-            //var cookie = getAuth();
             var payload = {
                 ISBN: request["ISBN"],
                 user_id: cookie['ID'],

@@ -1,0 +1,69 @@
+<head>
+    <title>Books Database</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./../jquery-3.3.1.min.js"></script>
+</head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Email</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        html {
+            padding: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-sm-6 col-sm-offset-3">
+            <h2>Edit Email</h2>
+            <p>Please note that this new email will be used to sign in</p>
+            <div class="form-group">
+                <label>New Email</label>
+                <input type="text" class="form-control" name="email" id="email">
+            </div>
+            <button type="submit" class="btn btn-succcess btn-lg" id="reg">
+                Change Email
+            </button>
+            <script>
+                document.getElementById('reg').onclick = function () {
+                    submit_user_form(document.getElementById('email').value);
+                }
+                var socket = io();
+                function submit_user_form(email) {
+                    var payload = {
+                        email: email,
+                        oldEmail: sessionStorage.email,
+                        ID: sessionStorage.ID,
+                        log: email
+                    }
+                    if (payload.email === '') {
+                        alert('All fields are mandatory');
+                    }
+                    else {
+                        socket.emit('editEmail', payload);
+                        socket.on("emailResult", function (data) {
+                            payload = data;
+                            if (payload.log == "true") {
+                                sessionStorage.email = payload.email;
+                                alert("Email successfully changed");
+                                location.href = "profile.html";
+                            }
+                            else {
+                                alert("That email is already taken");
+                                location.href = "email.html";
+                            }
+                        });
+                    }
+                }
+            </script>
+            <a href="edit.html">Back</a>
+        </div>
+    </div>
+</body>
