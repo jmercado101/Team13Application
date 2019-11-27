@@ -335,6 +335,19 @@ io.on('connection', function (socket) {
             }
         })
     });
+    
+    //Edits the User's Name
+    socket.on('editName', function (payload) {
+        console.log("Replacing the full name");
+        var query = "UPDATE users SET fName = '" + payload.fName + "', lName = '" + payload.lName + "' WHERE ID = '" + payload.ID + "'";//build query, all fields are necessary in add page		
+        database.query(query, function (error, results, fields) {
+            if (error) throw error;
+            console.log(results);
+            socket.emit('table result', results);
+        });
+        payload.log = "true";
+        socket.emit('nameResult', payload);
+    });
 
     //Adds Credit Card
     socket.on('addCredit', function (payload) {
