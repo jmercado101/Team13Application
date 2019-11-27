@@ -1,0 +1,73 @@
+<head>
+    <title>Books Database</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./../jquery-3.3.1.min.js"></script>
+</head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Credit</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        html {
+            padding: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-sm-6 col-sm-offset-3">
+            <h2>Edit Name</h2>
+            <div class="form-group">
+                <label>New First Name</label>
+                <input type="text" class="form-control" name="fName" id="fName">
+            </div>
+            <div class="form-group">
+                <label>New Last Name</label>
+                <input type="text" class="form-control" name="lName" id="lName">
+            </div>
+            <button type="submit" class="btn btn-succcess btn-lg" id="reg">
+                Change Name
+            </button>
+            <script>
+                document.getElementById('reg').onclick = function () {
+                    submit_user_form(document.getElementById('fName').value, document.getElementById('lName').value);
+                }
+                var socket = io();
+                function submit_user_form(fName, lName) {
+                    var payload = {
+                        fName: fName,
+                        lName: lName,
+                        ID: sessionStorage.ID,
+                        log: fName
+                    }
+                    if (payload.fName === '' || payload.lName == '') {
+                        alert('All fields are mandatory');
+                    }
+                    else {
+                        socket.emit('editName', payload);
+                        socket.on("nameResult", function (data) {
+                            payload = data;
+                            if (payload.log == "true") {
+                                sessionStorage.fName = payload.fName;
+                                sessionStorage.lName = payload.lName;
+                                alert("Name successfully changed");
+                                location.href = "profile.html";
+                            }
+                            else {
+                                alert("An error has occurred");
+                                location.href = "name.html";
+                            }
+                        });
+                    }
+                }
+            </script>
+            <a href="edit.html">Back</a>
+        </div>
+    </div>
+</body>
