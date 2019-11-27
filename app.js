@@ -252,7 +252,7 @@ io.on('connection', function (socket) {
 
     // END NEW CODE
 
-        //Add User to DB
+    //Add User to DB
     socket.on('addUser', function (payload) {
         var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email.toLowerCase() + "'OR users.nickname = '" + payload.nickname + "')";
         database.query(checkDuplicate, function (error, results, fields) {
@@ -276,6 +276,34 @@ io.on('connection', function (socket) {
                 });
                 payload.log = "true";
                 socket.emit('userResult', payload);
+            }
+        })
+    });
+    
+    //Edits the User's email
+    socket.on('editEmail', function (payload) {
+        var checkHome = "SELECT * FROM users WHERE (email = '" + payload.email + "')";
+        database.query(checkHome, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('emailResult', payload);
+            }
+            if (results.length) {
+                console.log("The email is already taken");
+                payload.log = "false";
+                socket.emit('emailResult', payload);
+            }
+            else {
+                console.log("Replacing the email");
+                var query = "UPDATE users SET email = '" + payload.email + "' WHERE ID = '" + payload.ID + "'";//build query, all fields are necessary in add page		
+                database.query(query, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                    socket.emit('table result', results);
+                });
+                payload.log = "true";
+                socket.emit('emailResult', payload);
             }
         })
     });
