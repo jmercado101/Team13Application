@@ -274,7 +274,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('userResult', payload);
@@ -302,7 +301,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('emailResult', payload);
@@ -330,7 +328,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('nicknameResult', payload);
@@ -345,7 +342,6 @@ io.on('connection', function (socket) {
         database.query(query, function (error, results, fields) {
             if (error) throw error;
             console.log(results);
-            socket.emit('table result', results);
         });
         payload.log = "true";
         socket.emit('nameResult', payload);
@@ -359,7 +355,6 @@ io.on('connection', function (socket) {
         database.query(query, function (error, results, fields) {
             if (error) throw error;
             console.log(results);
-            socket.emit('table result', results);
         });
         payload.log = "true";
         socket.emit('passwordResult', payload);
@@ -385,7 +380,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('creditResult', payload);
@@ -409,7 +403,6 @@ io.on('connection', function (socket) {
                 database.query(delHome, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
             }
             payload.log = "true";
@@ -434,7 +427,6 @@ io.on('connection', function (socket) {
                     database.query(delHome, function (error, results, fields) {
                         if (error) throw error;
                         console.log(results);
-                        socket.emit('table result', results);
                     });
                     payload.log = "false";
                 }
@@ -443,7 +435,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('addressResult', payload);
@@ -468,7 +459,6 @@ io.on('connection', function (socket) {
                     database.query(query, function (error, results, fields) {
                         if (error) throw error;
                         console.log(results);
-                        socket.emit('table result', results);
                     });
                     payload.log = "true";
                     socket.emit('addressResult', payload);
