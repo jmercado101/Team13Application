@@ -62,26 +62,35 @@
                     var payload = {
                         ID: sessionStorage.ID,
                         log: "false"
-                    }   
-                    socket.emit('getCard', payload);  
-                    socket.emit('getShipping', payload);                
+                    }
+                    socket.emit('getCard', payload);
+                    socket.emit('getShipping', payload);
+                    socket.emit('Home', payload)
                     socket.on("getCredit", data => {
                         var max = data.length;
                         for (var i = 0; i < max; i++) {
                             document.getElementById('credit').innerHTML += data[i].cardNum + '<div></div>';
                         }
-                    }); 
+                    });
                     socket.on("getAddress", data => {
                         var total = data.length;
                         for (var j = 0; j < total; j++) {
                             document.getElementById('shipping').innerHTML += data[j].street_address + '<div></div>';
                         }
-                    });                               
+                    });
+                    socket.on("getHome", data => {
+                        var total = data.length;
+                        if (data.length < 1) {
+                            homeAddress.innerHTML = "You have not provided us your home address"
+                        }
+                        else {
+                            document.getElementById('homeAddress').innerHTML = data[0].street_address;
+                        }
+                    });
                     myEmail.innerHTML = sessionStorage.email;
                     myNickname.innerHTML = sessionStorage.nickname;
                     myfName.innerHTML = sessionStorage.fName;
                     mylName.innerHTML = sessionStorage.lName;
-                    homeAddress.innerHTML = sessionStorage.home;
                 }
             </script>
             <p><a href="/">Logout</a></p>
