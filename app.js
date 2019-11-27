@@ -350,6 +350,20 @@ io.on('connection', function (socket) {
         payload.log = "true";
         socket.emit('nameResult', payload);
     });
+    
+    //Edits the User's Password
+    socket.on('editPassword', function (payload) {
+        console.log("Replacing the full name");
+        var newPassword = hashPassword(payload.password);
+        var query = "UPDATE users SET passwd = '" + newPassword + "' WHERE ID = '" + payload.ID + "'";//build query, all fields are necessary in add page		
+        database.query(query, function (error, results, fields) {
+            if (error) throw error;
+            console.log(results);
+            socket.emit('table result', results);
+        });
+        payload.log = "true";
+        socket.emit('passwordResult', payload);
+    });
 
     //Adds Credit Card
     socket.on('addCredit', function (payload) {
