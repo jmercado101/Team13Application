@@ -233,7 +233,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('addCredit', function (payload) {
-        var checkDuplicate = "SELECT * FROM credit_card WHERE (credit_card.cardNum = '" + payload.cardNum  + "'AND credit_card.userID = '" + payload.ID + "')";
+        var checkDuplicate = "SELECT * FROM credit_card WHERE (credit_card.cardNum = '" + payload.cardNum + "'AND credit_card.userID = '" + payload.ID + "')";
         database.query(checkDuplicate, function (error, results, fields) {
             if (error) {
                 console.log("An error has occurred");
