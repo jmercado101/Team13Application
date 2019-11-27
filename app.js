@@ -252,7 +252,7 @@ io.on('connection', function (socket) {
 
     // END NEW CODE
 
-    //Add User to DB
+        //Add User to DB
     socket.on('addUser', function (payload) {
         var checkDuplicate = "SELECT * FROM users WHERE (users.email = '" + payload.email.toLowerCase() + "'OR users.nickname = '" + payload.nickname + "')";
         database.query(checkDuplicate, function (error, results, fields) {
@@ -280,6 +280,7 @@ io.on('connection', function (socket) {
         })
     });
 
+    //Adds Credit Card
     socket.on('addCredit', function (payload) {
         var checkDuplicate = "SELECT * FROM credit_card WHERE (credit_card.cardNum = '" + payload.cardNum + "'AND credit_card.userID = '" + payload.ID + "')";
         database.query(checkDuplicate, function (error, results, fields) {
@@ -307,6 +308,89 @@ io.on('connection', function (socket) {
         })
     });
 
+    //Deletes an Address
+    socket.on('delAddress', function (payload) {
+        payload.log = "false";
+        var check = "SELECT * FROM address WHERE (userID = '" + payload.ID + "'AND street_address ='" + payload.street_address + "'AND isHome = '" + payload.isHome + "')";
+        database.query(check, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('addressResult', payload);
+            }
+            if (results.length) {
+                console.log("Removing Address");
+                var delHome = "DELETE FROM address WHERE (userID = '" + payload.ID + "'AND street_address ='" + payload.street_address + "'AND isHome = '" + payload.isHome + "')";
+                database.query(delHome, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                    socket.emit('table result', results);
+                });
+            }
+            payload.log = "true";
+            socket.emit('addressResult', payload);
+        })
+    });
+
+
+    //Adds an address
+    socket.on('addAddress', function (payload) {
+        if (payload.isHome == 1) {
+            var checkHome = "SELECT * FROM address WHERE (userID = '" + payload.ID + "'AND isHome ='" + payload.isHome + "')";
+            database.query(checkHome, function (error, results, fields) {
+                if (error) {
+                    console.log("An error has occurred");
+                    payload.log = "false";
+                    socket.emit('addressResult', payload);
+                }
+                if (results.length) {
+                    console.log("Removing old Home address");
+                    var delHome = "DELETE FROM address WHERE (userID = '" + payload.ID + "'AND isHome ='" + payload.isHome + "')";
+                    database.query(delHome, function (error, results, fields) {
+                        if (error) throw error;
+                        console.log(results);
+                        socket.emit('table result', results);
+                    });
+                    payload.log = "false";
+                }
+                console.log("The address will be registered");
+                var query = "INSERT INTO address (userID, isHome, name, street_address, city, state, zip_code, country) VALUES('" + payload.ID + "','" + payload.isHome + "','" + payload.name + "','" + payload.street_address + "','" + payload.city + "','" + payload.state + "','" + payload.zip_code + "','" + payload.country + "')";//build query, all fields are necessary in add page		
+                database.query(query, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                    socket.emit('table result', results);
+                });
+                payload.log = "true";
+                socket.emit('addressResult', payload);
+            })
+        }
+        else {
+            var checkDuplicate = "SELECT * FROM address WHERE (userID = '" + payload.ID + "'AND street_address = '" + payload.street_address + "')";
+            database.query(checkDuplicate, function (error, results, fields) {
+                if (error) {
+                    console.log("An error has occurred");
+                    payload.log = "false";
+                    socket.emit('addressResult', payload);
+                }
+                if (results.length) {
+                    console.log("Address is already listed");
+                    payload.log = "false";
+                    socket.emit('addressResult', payload);
+                }
+                else {
+                    console.log("The address will be registered");
+                    var query = "INSERT INTO address (userID, isHome, name, street_address, city, state, zip_code, country) VALUES('" + payload.ID + "','" + payload.isHome + "','" + payload.name + "','" + payload.street_address + "','" + payload.city + "','" + payload.state + "','" + payload.zip_code + "','" + payload.country + "')";//build query, all fields are necessary in add page		
+                    database.query(query, function (error, results, fields) {
+                        if (error) throw error;
+                        console.log(results);
+                        socket.emit('table result', results);
+                    });
+                    payload.log = "true";
+                    socket.emit('addressResult', payload);
+                }
+            })
+        }
+    });
 
     //socket on add ratings NEW
     socket.on('addRatings', function (token, payload) {
@@ -382,7 +466,7 @@ io.on('connection', function (socket) {
         email = email.toLowerCase();
         if (email != null && password != null) {
             console.log('Attemted sign in from: ' + email);
-            //console.log(password)
+            console.log(password)
             database.query("SELECT * FROM users WHERE email = '" + email + "'", function (error, users, fields) {
                 if (error || users[0] == null) {
                     console.error(error);
