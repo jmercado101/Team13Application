@@ -209,20 +209,22 @@ io.on('connection', function (socket) {
         console.log("testFunctionSays: " + comment);
     });
 
-    socket.on('purchased', function (ISBN, ID) {
-        if (ISBN != null && ID != null) {
-            database.query("SELECT count(*) AS count FROM purchased WHERE EXISTS (SELECT * FROM purchased WHERE purchased.ID = " + ID + " AND purchased.ISBN = " + ISBN + ")", function (error, purchased, fields) {
-                if (error) {
-                    console.error(error);
-                }
-                else {
-                    console.log('Book purchased: ' + purchased[0].count);
-                    socket.emit('wasPurchased', purchased[0].count);
-                }
-            });
-        }
-        else {
-            console.error("ERROR: purchased: ISBN or ID == null");
+    socket.on('purchased', function (ISBN, ID, token) {
+        if (checkToken(ID, token)) {
+            if (ISBN != null && ID != null) {
+                database.query("SELECT count(*) AS count FROM purchased WHERE EXISTS (SELECT * FROM purchased WHERE purchased.ID = " + ID + " AND purchased.ISBN = " + ISBN + ")", function (error, purchased, fields) {
+                    if (error) {
+                        console.error(error);
+                    }
+                    else {
+                        console.log('Book purchased: ' + purchased[0].count);
+                        socket.emit('wasPurchased', purchased[0].count);
+                    }
+                });
+            }
+            else {
+                console.error("ERROR: purchased: ISBN or ID == null");
+            }
         }
     });
 
