@@ -432,7 +432,6 @@ io.on('connection', function (socket) {
         })
     });
 
-
     //Adds an address
     socket.on('addAddress', function (payload) {
         if (payload.isHome == 1) {
@@ -487,6 +486,28 @@ io.on('connection', function (socket) {
                 }
             })
         }
+    });
+    
+    //Get Shipping Addresses
+    socket.on('getShipping', function (payload) {
+        var checkCard = "SELECT street_address FROM address WHERE (userID = '" + payload.ID + "')";
+        database.query(checkCard, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('getAddress', payload);
+            }
+            if (results.length) {
+                console.log("Shipping Adresses will be listed");
+                payload.log = "true";
+                socket.emit('getAddress', results);
+            }
+            else {
+                console.log("There are no shipping addresses");
+                payload.log = "false";
+                socket.emit('getAddress', payload);
+            }
+        })
     });
 
     //socket on add ratings NEW
