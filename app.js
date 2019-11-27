@@ -387,6 +387,28 @@ io.on('connection', function (socket) {
         })
     });
 
+    //Get Credit Card
+    socket.on('getCard', function (payload) {
+        var checkCard = "SELECT cardNum FROM credit_card WHERE (userID = '" + payload.ID + "')";
+        database.query(checkCard, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('getCredit', payload);
+            }
+            if (results.length) {
+                console.log("Credit Card will be listed");
+                payload.log = "true";
+                socket.emit('getCredit', results);
+            }
+            else {
+                console.log("There are no cards");
+                payload.log = "false";
+                socket.emit('getCredit', payload);
+            }
+        })
+    });
+    
     //Deletes an Address
     socket.on('delAddress', function (payload) {
         payload.log = "false";
