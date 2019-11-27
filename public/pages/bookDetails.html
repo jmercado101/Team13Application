@@ -185,7 +185,8 @@
                 //request rating data for provided ISBN.
                 socket.emit('bookRating', request["ISBN"]);
 
-                console.log('Sent request to server');
+                console.log('Checking if user can rate book.');
+                reviewButton();
 
                 //Listens for result to return from the server.
                 socket.on("ratingResult", function (rating) {
@@ -193,26 +194,6 @@
                     //console.log(data);
                     showStars(bookRating);
                 });
-
-                //Checks if cookie has been created and is authentic.
-                if (cookie != null) {
-                    socket.emit('purchased', request["ISBN"], cookie['ID'], cookie['token']); //sending user details to server for check.
-                    console.log('Checking is user bought the book...');
-                    socket.on("wasPurchased", function (value) {
-                        if (value >= 1) {
-                            //If the user has bought at least one of the provided ISBN then the button is ENABLED to allow reviewing.
-                            document.getElementById("rate_button").disabled = false;
-                            document.getElementById('rate_button').style.backgroundColor = '#7bb743';
-                            document.getElementById('rate_button').style.color = 'white';
-                        }
-                        else {
-                            //If the user has NOT bought at least one of the provided ISBN then the button is DISABLED to prevent reviewing.
-                            document.getElementById("rate_button").disabled = true;
-                            document.getElementById("rate_button").style.backgroundColor = '#889977';
-                            document.getElementById("rate_button").style.color = '#a7bd91';
-                        }
-                    });
-                }
 
                 //Request user comments on the book ISBN from the server.
                 socket.emit('comments', request["ISBN"]);
@@ -222,7 +203,6 @@
                 });
 
             }); //END Run on page load.
-
 
             function display(bookData) {
 
@@ -247,6 +227,28 @@
             function showStars(numStars) {
                 document.getElementById("starField").innerHTML = genStars(numStars) + ' ' + numStars;
             };
+
+            //Checks if cookie has been created and is authentic.
+            function reviewButton() {
+                if (cookie != null) {
+                    socket.emit('purchased', request["ISBN"], cookie['ID'], cookie['token']); //sending user details to server for check.
+                    console.log("Checking is user: " + cookie['ID'] + " bought the book...");
+                    socket.on("wasPurchased", function (value) {
+                        if (value >= 1) {
+                            //If the user has bought at least one of the provided ISBN then the button is ENABLED to allow reviewing.
+                            document.getElementById("rate_button").disabled = false;
+                            document.getElementById('rate_button').style.backgroundColor = '#7bb743';
+                            document.getElementById('rate_button').style.color = 'white';
+                        }
+                    });
+                }
+                else {
+                    //If the user has NOT bought at least one of the provided ISBN then the button is DISABLED to prevent reviewing.
+                    document.getElementById("rate_button").disabled = true;
+                    document.getElementById("rate_button").style.backgroundColor = '#889977';
+                    document.getElementById("rate_button").style.color = '#a7bd91';
+                }
+            }
 
             //Generates the star string used in both the main star field and the comments section when provided with a valid number.
             function genStars(numStars) {
