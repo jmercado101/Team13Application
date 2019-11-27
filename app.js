@@ -307,6 +307,34 @@ io.on('connection', function (socket) {
             }
         })
     });
+    
+    //Edits the User's Nickname
+    socket.on('editNickname', function (payload) {
+        var checkHome = "SELECT * FROM users WHERE (nickname = '" + payload.nickname + "')";
+        database.query(checkHome, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('nicknameResult', payload);
+            }
+            if (results.length) {
+                console.log("The nickname is already taken");
+                payload.log = "false";
+                socket.emit('nicknameResult', payload);
+            }
+            else {
+                console.log("Replacing the nickname");
+                var query = "UPDATE users SET nickname = '" + payload.nickname + "' WHERE ID = '" + payload.ID + "'";//build query, all fields are necessary in add page		
+                database.query(query, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                    socket.emit('table result', results);
+                });
+                payload.log = "true";
+                socket.emit('nicknameResult', payload);
+            }
+        })
+    });
 
     //Adds Credit Card
     socket.on('addCredit', function (payload) {
