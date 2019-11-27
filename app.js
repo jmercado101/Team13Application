@@ -334,7 +334,7 @@ io.on('connection', function (socket) {
         email = email.toLowerCase();
         if (email != null && password != null) {
             console.log('Attemted sign in from: ' + email);
-            console.log(password)
+            //console.log(password)
             database.query("SELECT * FROM users WHERE email = '" + email + "'", function (error, users, fields) {
                 if (error || users[0] == null) {
                     console.error(error);
