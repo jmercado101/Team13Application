@@ -25,17 +25,31 @@
             <h2>Welcome!</h2>
             <div id="myfName"></div>
             <div id="mylName"></div>
-            <div><p>  </p></div>
+            <br></br>
+            <h3>Your personal info</h3>
             <div class="info">
                 <label>Nickname</label>
             </div>
-            <div id= "myNickname"></div>
-            <div><p>  </p></div>
+            <div id="myNickname"></div>
             <div class="info" id="info">
                 <label>Email</label>
             </div>
             <div id="myEmail"></div>
-            <div><p>  </p></div>
+            <div class="info">
+                <label>Available Credit Cards</label>
+            </div>
+            <div class="info">
+                <label>Listed Home Address</label>
+            </div>
+            <div id="homeAddress"></div>
+            <div class="info">
+                <label>Listed Shipping Address(es)</label>
+            </div>
+            <br></br>
+            <p><a href="edit.html">Edit Info</a></p>
+            <div>
+                <p> _________________________________________________________________________</p>
+            </div>
             <button class="btn btn-succcess btn-lg" onclick="window.location.href = '/';">
                 Shop!
             </button>
@@ -46,9 +60,9 @@
                     myNickname.innerHTML = sessionStorage.nickname;
                     myfName.innerHTML = sessionStorage.fName;
                     mylName.innerHTML = sessionStorage.lName;
+                    homeAddress.innerHTML = sessionStorage.home;
                 }
             </script>
-            <p><a href="credit.html">Add Credit Card</a></p>
             <p><a href="/">Logout</a></p>
         </div>
     </div>
