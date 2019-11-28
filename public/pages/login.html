@@ -52,7 +52,7 @@
     <div class="header">
         <a href="/"><img src="/images/Logo.png" /></a>
     </div>
-    <div class="mainBody">
+        <div class="mainBody">
         <div class="NavigationBox">
         </div>
         <div class="productBox">
@@ -88,10 +88,11 @@
 
                                 socket.emit('signIn', email, password);
                                 console.log('Attempting to log in.');
-                                socket.on("allInfo",function(nickname, fName, lName){
+                                socket.on("allInfo", function (nickname, fName, lName, ID) {
                                     sessionStorage.nickname = nickname;
                                     sessionStorage.fName = fName;
                                     sessionStorage.lName = lName;
+                                    sessionStorage.ID = ID;
                                 })
 
                                 socket.on("authenticated", function (token, ID) {

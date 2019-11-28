@@ -274,7 +274,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('userResult', payload);
@@ -302,7 +301,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('emailResult', payload);
@@ -330,7 +328,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('nicknameResult', payload);
@@ -345,7 +342,6 @@ io.on('connection', function (socket) {
         database.query(query, function (error, results, fields) {
             if (error) throw error;
             console.log(results);
-            socket.emit('table result', results);
         });
         payload.log = "true";
         socket.emit('nameResult', payload);
@@ -359,7 +355,6 @@ io.on('connection', function (socket) {
         database.query(query, function (error, results, fields) {
             if (error) throw error;
             console.log(results);
-            socket.emit('table result', results);
         });
         payload.log = "true";
         socket.emit('passwordResult', payload);
@@ -385,7 +380,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('creditResult', payload);
@@ -393,6 +387,52 @@ io.on('connection', function (socket) {
         })
     });
 
+    //Get Credit Card
+    socket.on('getCard', function (payload) {
+        var checkCard = "SELECT cardNum FROM credit_card WHERE (userID = '" + payload.ID + "')";
+        database.query(checkCard, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('getCredit', payload);
+            }
+            if (results.length) {
+                console.log("Credit Card will be listed");
+                payload.log = "true";
+                socket.emit('getCredit', results);
+            }
+            else {
+                console.log("There are no cards");
+                payload.log = "false";
+                socket.emit('getCredit', payload);
+            }
+        })
+    });
+    
+    //Deletes a Credit Card
+    socket.on('delCredit', function (payload) {
+        payload.log = "false";
+        var check = "SELECT * FROM credit_card WHERE (userID = '" + payload.ID + "'AND cardNum ='" + payload.cardNum + "')";
+        database.query(check, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('cardResult', payload);
+            }
+            if (results.length) {
+                console.log("Removing Credit Card");
+                var delHome = "DELETE FROM credit_card WHERE (userID = '" + payload.ID  + "'AND cardNum ='" + payload.cardNum + "')";
+                database.query(delHome, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                });
+                payload.log = "true";
+                socket.emit('cardResult', payload);
+            }
+            socket.emit('cardResult', payload);
+        })
+    });
+    
     //Deletes an Address
     socket.on('delAddress', function (payload) {
         payload.log = "false";
@@ -409,14 +449,12 @@ io.on('connection', function (socket) {
                 database.query(delHome, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
+                payload.log = "true";
             }
-            payload.log = "true";
             socket.emit('addressResult', payload);
         })
     });
-
 
     //Adds an address
     socket.on('addAddress', function (payload) {
@@ -434,7 +472,6 @@ io.on('connection', function (socket) {
                     database.query(delHome, function (error, results, fields) {
                         if (error) throw error;
                         console.log(results);
-                        socket.emit('table result', results);
                     });
                     payload.log = "false";
                 }
@@ -443,7 +480,6 @@ io.on('connection', function (socket) {
                 database.query(query, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
-                    socket.emit('table result', results);
                 });
                 payload.log = "true";
                 socket.emit('addressResult', payload);
@@ -468,13 +504,56 @@ io.on('connection', function (socket) {
                     database.query(query, function (error, results, fields) {
                         if (error) throw error;
                         console.log(results);
-                        socket.emit('table result', results);
                     });
                     payload.log = "true";
                     socket.emit('addressResult', payload);
                 }
             })
         }
+    });
+    
+    //Get Shipping Addresses
+    socket.on('getShipping', function (payload) {
+        var checkCard = "SELECT street_address FROM address WHERE (userID = '" + payload.ID + "')";
+        database.query(checkCard, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('getAddress', payload);
+            }
+            if (results.length) {
+                console.log("Shipping Adresses will be listed");
+                payload.log = "true";
+                socket.emit('getAddress', results);
+            }
+            else {
+                console.log("There are no shipping addresses");
+                payload.log = "false";
+                socket.emit('getAddress', payload);
+            }
+        })
+    });
+    
+    //Get Home Address
+    socket.on('Home', function (payload) {
+        var checkCard = "SELECT street_address FROM address WHERE (userID = '" + payload.ID + "'AND isHome = '" + 1 + "')";
+        database.query(checkCard, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('getHome', payload);
+            }
+            if (results.length) {
+                console.log("Shipping Adresses will be listed");
+                payload.log = "true";
+                socket.emit('getHome', results);
+            }
+            else {
+                console.log("There are no shipping addresses");
+                payload.log = "false";
+                socket.emit('getHome', payload);
+            }
+        })
     });
 
     //socket on add ratings NEW
