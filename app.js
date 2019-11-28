@@ -409,6 +409,30 @@ io.on('connection', function (socket) {
         })
     });
     
+    //Deletes a Credit Card
+    socket.on('delCredit', function (payload) {
+        payload.log = "false";
+        var check = "SELECT * FROM credit_card WHERE (userID = '" + payload.ID + "'AND cardNum ='" + payload.cardNum + "')";
+        database.query(check, function (error, results, fields) {
+            if (error) {
+                console.log("An error has occurred");
+                payload.log = "false";
+                socket.emit('cardResult', payload);
+            }
+            if (results.length) {
+                console.log("Removing Credit Card");
+                var delHome = "DELETE FROM credit_card WHERE (userID = '" + payload.ID  + "'AND cardNum ='" + payload.cardNum + "')";
+                database.query(delHome, function (error, results, fields) {
+                    if (error) throw error;
+                    console.log(results);
+                });
+                payload.log = "true";
+                socket.emit('cardResult', payload);
+            }
+            socket.emit('cardResult', payload);
+        })
+    });
+    
     //Deletes an Address
     socket.on('delAddress', function (payload) {
         payload.log = "false";
