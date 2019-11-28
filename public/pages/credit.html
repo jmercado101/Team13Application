@@ -55,6 +55,9 @@
         document.getElementById('reg').onclick = function () {
           submit_user_form(document.getElementById('nameOnCard').value, document.getElementById('cardNum').value, document.getElementById('exp_date').value, document.getElementById('cvv').value, document.getElementById('zipCode').value);
         }
+        document.getElementById('del').onclick = function () {
+          delete_user_form(document.getElementById('cardNum').value);
+        }
         var socket = io();
         function submit_user_form(nameOnCard, cardNum, exp_date, cvv, zipCode) {
           var payload = {
@@ -80,6 +83,30 @@
               }
               else {
                 alert("Credit card is already listed");
+                location.href = "credit.html";
+              }
+            });
+          }
+        }
+        function delete_user_form(cardNum) {
+          var payload = {
+            cardNum: cardNum,
+            ID: sessionStorage.ID,
+            log: cardNum
+          }
+          if (payload.cardNum === '') {
+            alert('Please fill in the necessary fields');
+          }
+          else {
+            socket.emit('delCredit', payload);
+            socket.on("cardResult", function (data) {
+              payload = data;
+              if (payload.log == "true") {
+                alert("Credit card successfully deleted");
+                location.href = "profile.html";
+              }
+              else {
+                alert("Credit card is not listed");
                 location.href = "credit.html";
               }
             });
