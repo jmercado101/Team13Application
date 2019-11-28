@@ -57,6 +57,7 @@
                 <a href="pages/books.html">Books</a>
                 <a href="pages/register.html">Register</a>
                 <a href="pages/login.html" id="login">Log In</a>
+                <a href="" onclick="logOut();">Logout</a>
                 <div class="cart-btn">
                     <span class="nav-icon">
                         <i class="fas fa-cart-plus" onclick="showCart()"></i>
@@ -227,6 +228,10 @@
 			document.getElementById("cart-total").innerText -= minusPrice;
             document.getElementById("cart-items").innerText -= quantity;
             socket.emit('removeBook', cookie['ID'], ISBN, cookie['token']);
+        }
+
+        function logOut() {
+            document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         }
 
 	</script>

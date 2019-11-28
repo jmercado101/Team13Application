@@ -15,7 +15,7 @@
             .header {
                 width: 100%;
                 height: 82px;
-                background-color: green;
+                background-color: #DDDDDD;
             }
 
             .header img
@@ -37,7 +37,7 @@
             }
 
             .NavigationBox {
-                background-color: blue;
+                background-color: #f0f0f0;
                 width: 15%;
                 height: 100%;
                 float: left;
@@ -47,7 +47,7 @@
                 margin-left: 15%;
                 width: 85%;
                 height: 100%;
-                background-color: red;
+                //background-color: red;
             }
 
             .productTree {
@@ -79,7 +79,7 @@
             .bookDetails {
                 width: 60%;
                 margin-left: 50px;
-                background-color: orange;
+                background-color: #e8ede8;
             }
 
             .product-right {
@@ -89,27 +89,33 @@
 
             .bookTitle {
                 margin-top: 50px;
-                background-color: green;
+                background-color: #e8ede8;
             }
 
             .cartOptions {
-                background-color: orange;
+                background-color: dcfadc;
             }
 
             .bookDescription {
-                background-color: blue;
+                background-color: #e8ede8;
             }
 
             .aboutAuthor {
-                background-color: green;
+                background-color: #e8ede8;
             }
 
             .userRating {
-                background-color: yellow;
+                background-color: #e8ede8;
             }
 
             .userComments {
-                background-color: orange;
+                background-color: #e8ede8;
+                height: auto;
+                max-height: 400px;
+                width: 100%;
+                border: 0px solid #ccc;
+                font: 16px/26px Georgia, Garamond, Serif;
+                overflow: auto;
             }
 
             h1, h2, h3, h4 {
@@ -242,13 +248,19 @@
             function reviewButton() {
                 if (cookie != null) {
                     socket.emit('purchased', request["ISBN"], cookie['ID'], cookie['token']); //sending user details to server for check.
-                    console.log("Checking is user: " + cookie['ID'] + " bought the book...");
+                    console.log("Checking if user: " + cookie['ID'] + " bought the book...");
                     socket.on("wasPurchased", function (value) {
                         if (value >= 1) {
                             //If the user has bought at least one of the provided ISBN then the button is ENABLED to allow reviewing.
                             document.getElementById("rate_button").disabled = false;
                             document.getElementById('rate_button').style.backgroundColor = '#7bb743';
                             document.getElementById('rate_button').style.color = 'white';
+                        }
+                        else {
+                            //If the user has NOT bought at least one of the provided ISBN then the button is DISABLED to prevent reviewing.
+                            document.getElementById("rate_button").disabled = true;
+                            document.getElementById("rate_button").style.backgroundColor = '#889977';
+                            document.getElementById("rate_button").style.color = '#a7bd91';
                         }
                     });
                 }
@@ -283,7 +295,7 @@
 
             //Generates the comment section and populates it with the provided user comments when called.
             function displayComments(commentArray) {
-                var comments = "";
+                var comments = "<hr>";
                 for (i in commentArray) {
                     comments = comments.concat("<div class='commentHead'><img class='userImage' src='https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-03.png' width='80px' height='80px'></img>");
                     comments = comments.concat("<div class='nameAndRate'><h3><username>" + commentArray[i].nickname + "</username></h3>");
@@ -349,6 +361,10 @@
                 }
             }
 
+            function logOut() {
+                document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            }
+
         </script>
 
 
@@ -362,6 +378,7 @@
                 <a href="/pages/books.html">Books</a>
                 <a href="register.html">Register</a>
                 <a href="/pages/login.html" class="login">Log In</a>
+                <a href="" onclick="logOut();">Logout</a>
             </navLinks>
         </div>
 
@@ -420,10 +437,7 @@
 
                     <div class="userComments">
                         <h2>User Comments</h2>
-                        <hr>
-                        <div style="height:400px;width:100%;border:0px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
-                            <span id="commentSection"></span>
-                        </div>
+                        <span id="commentSection"></span>
                     </div>
 
 				</div>
