@@ -450,8 +450,8 @@ io.on('connection', function (socket) {
                     if (error) throw error;
                     console.log(results);
                 });
+                payload.log = "true";
             }
-            payload.log = "true";
             socket.emit('addressResult', payload);
         })
     });
