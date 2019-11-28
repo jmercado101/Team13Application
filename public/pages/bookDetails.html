@@ -170,6 +170,10 @@
             //START Run on page load.
             $(document).ready(function () {
 
+                if (request['ISBN'] == null) {
+                    request['ISBN'] = 1234567890123;
+                }
+
                 //request details for the provided ISBN
                 socket.emit('bookDetails', request["ISBN"]);
 
@@ -177,9 +181,15 @@
 
                 //Listens for result to return from the server.
                 socket.on("detailsResult", function (data) {
-                    bookData = data;
-                    //console.log(data);
-                    display(bookData);
+                    if (data == null) {
+                        request['ISBN'] = 1234567890123;
+                        socket.emit('bookDetails', request["ISBN"]);
+                    }
+                    else {
+                        bookData = data;
+                        //console.log(data);
+                        display(bookData);
+                    }
                 });
 
                 //request rating data for provided ISBN.
@@ -253,7 +263,6 @@
             //Generates the star string used in both the main star field and the comments section when provided with a valid number.
             function genStars(numStars) {
                 var starsString = "";
-                var end = false;
                 if (numStars > 0 && numStars < 6) {
                     starsString = "";
                     for (var i = 0; i < 5; i++) {
